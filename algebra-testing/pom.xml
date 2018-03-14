@@ -8,13 +8,13 @@
     <version>1.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>algebra-public-testing</artifactId>
+  <artifactId>algebra-testing</artifactId>
   <version>1.1-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
       <groupId>com.hubspot</groupId>
-      <artifactId>algebra-public</artifactId>
+      <artifactId>algebra</artifactId>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
