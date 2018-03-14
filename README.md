@@ -3,19 +3,19 @@ Generic ADTs in Java.
 
 ## Using
 
-To use `algebra-public` in your project simply include it in your POM:
+To use `algebra` in your project simply include it in your POM:
 
 ```xml
     <dependency>
       <groupId>com.hubspot</groupId>
-      <artifactId>algebra-public</artifactId>
+      <artifactId>algebra</artifactId>
       <version>1.0</version>
     </dependency>
 ```
 
 ## Provided Types
 
-The main type provided by `algebra-public` is the `Result<T, E>`. `T` and `E` can be any classes you want, but it is generally advisable that `E` be an enum or another ADT so you can correctly match on error conditions. Lets take a look at an example.
+The main type provided by `algebra` is the `Result<T, E>`. `T` and `E` can be any classes you want, but it is generally advisable that `E` be an enum or another ADT so you can correctly match on error conditions. Lets take a look at an example.
 
 ```java
 enum Error {
@@ -58,9 +58,9 @@ client.doMoreWork().match(
 
 ## Testing
 
-To test code with ADTs, we provide a fluent AssertJ API in `algebra-public-testing`.
+To test code with ADTs, we provide a fluent AssertJ API in `algebra-testing`.
 
-To use `algebra-public-testing` in your project simply include it in your POM:
+To use `algebra-testing` in your project simply include it in your POM:
 
 ```xml
     <dependency>
