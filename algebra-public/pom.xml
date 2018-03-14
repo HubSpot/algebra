@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.hubspot</groupId>
     <artifactId>algebra-public-parent</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>algebra-public</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
 
   <properties>
     <basepom.check.skip-findbugs>true</basepom.check.skip-findbugs>
