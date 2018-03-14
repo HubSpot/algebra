@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.hubspot</groupId>
+    <artifactId>basepom</artifactId>
+    <version>18.2</version>
+  </parent>
+
+  <artifactId>algebra-public-parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <project.build.targetJdk>1.8</project.build.targetJdk>
+    <dep.derive4j.version>0.12.3</dep.derive4j.version>
+  </properties>
+
+  <modules>
+    <module>algebra-public</module>
+    <module>algebra-public-testing</module>
+    <module>algebra-public-jackson</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.hubspot.immutables</groupId>
+        <artifactId>hubspot-style</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.hubspot.immutables</groupId>
+        <artifactId>immutables-exceptions</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>com.hubspot</groupId>
+        <artifactId>algebra-public</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.immutables</groupId>
+        <artifactId>value</artifactId>
+        <version>2.2.10</version>
+      </dependency>
+      <dependency>
+        <groupId>org.derive4j</groupId>
+        <artifactId>derive4j</artifactId>
+        <version>${dep.derive4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.derive4j</groupId>
+        <artifactId>derive4j-annotation</artifactId>
+        <version>${dep.derive4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.7.9</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.7.9.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
