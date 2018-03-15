@@ -4,11 +4,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.annotation.concurrent.NotThreadSafe;
-
 import org.derive4j.Data;
+import org.derive4j.Derive;
+import org.derive4j.Visibility;
 
-@Data
+@Data(@Derive(withVisibility = Visibility.Package))
 public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
   public static <SUCCESS_TYPE, E> Result<SUCCESS_TYPE, E> ok(SUCCESS_TYPE success) {
     return Results.ok(success);
@@ -90,6 +90,11 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
   }
 
   public abstract <R> R match(Function<ERROR_TYPE, R> err, Function<SUCCESS_TYPE, R> ok);
+
+  @Override
+  public abstract int hashCode();
+  @Override
+  public abstract boolean equals(Object obj);
 
   @Override
   public String toString() {
