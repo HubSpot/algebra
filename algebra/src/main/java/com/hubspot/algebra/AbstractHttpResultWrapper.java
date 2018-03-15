@@ -8,7 +8,7 @@ import org.immutables.value.Value.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
-import com.hubspot.immutables.styles.HubSpotStyle;
+import com.hubspot.immutables.style.HubSpotStyle;
 
 @Immutable
 @HubSpotStyle
