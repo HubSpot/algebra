@@ -65,7 +65,7 @@ To use `algebra-testing` in your project simply include it in your POM:
 ```xml
     <dependency>
       <groupId>com.hubspot</groupId>
-      <artifactId>algebra--public-testing</artifactId>
+      <artifactId>algebra-testing</artifactId>
       <version>1.0</version>
       <scope>test</scope>
     </dependency>
