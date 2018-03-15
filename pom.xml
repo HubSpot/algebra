@@ -15,7 +15,7 @@
   <properties>
     <project.build.targetJdk>1.8</project.build.targetJdk>
     <dep.derive4j.version>0.12.3</dep.derive4j.version>
-    <dep.immutables-utils.version>1.0</dep.immutables-utils.version>
+    <dep.immutables-utils.version>1.2</dep.immutables-utils.version>
   </properties>
 
   <modules>
