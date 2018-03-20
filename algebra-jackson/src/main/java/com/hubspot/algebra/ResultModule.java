@@ -2,6 +2,7 @@ package com.hubspot.algebra;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.Module;
+import com.google.inject.Inject;
 
 public class ResultModule extends Module {
   static final String CASE_FIELD_NAME = "@result";
@@ -11,6 +12,9 @@ public class ResultModule extends Module {
     OK,
     ERR;
   }
+
+  @Inject
+  public ResultModule() {}
 
   @Override
   public String getModuleName() {
