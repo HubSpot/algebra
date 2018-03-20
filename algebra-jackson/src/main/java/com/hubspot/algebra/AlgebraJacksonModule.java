@@ -9,7 +9,7 @@ public class AlgebraJacksonModule extends AbstractModule {
   protected void configure() {
     Multibinder.newSetBinder(binder(), Module.class)
         .addBinding()
-        .to(ResultModule.class);
+        .toInstance(new ResultModule());
   }
 
 
