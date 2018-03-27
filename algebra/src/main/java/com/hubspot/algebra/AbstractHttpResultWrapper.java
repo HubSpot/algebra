@@ -7,11 +7,14 @@ import org.immutables.value.Value.Default;
 import org.immutables.value.Value.Immutable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.google.common.base.Preconditions;
 import com.hubspot.immutables.style.HubSpotStyle;
 
 @Immutable
 @HubSpotStyle
+@JsonNaming(PropertyNamingStrategy.class)
 public abstract class AbstractHttpResultWrapper<T, E> {
   public static <T, E> HttpResultWrapper<T, E> ok(T ok) {
     return HttpResultWrapper.<T, E>builder()
