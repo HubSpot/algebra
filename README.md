@@ -6,12 +6,14 @@ Generic ADTs in Java.
 To use `algebra` in your project simply include it in your POM:
 
 ```xml
-    <dependency>
-      <groupId>com.hubspot</groupId>
-      <artifactId>algebra</artifactId>
-      <version>1.0</version>
-    </dependency>
+<dependency>
+  <groupId>com.hubspot</groupId>
+  <artifactId>algebra</artifactId>
+  <version>${algebra.version}</version>
+</dependency>
 ```
+
+The current version is `1.3-SNAPSHOT`.
 
 ## Provided Types
 
@@ -63,12 +65,12 @@ To test code with ADTs, we provide a fluent AssertJ API in `algebra-testing`.
 To use `algebra-testing` in your project simply include it in your POM:
 
 ```xml
-    <dependency>
-      <groupId>com.hubspot</groupId>
-      <artifactId>algebra-testing</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-    </dependency>
+<dependency>
+  <groupId>com.hubspot</groupId>
+  <artifactId>algebra-testing</artifactId>
+  <version>${algebra.version}</version>
+  <scope>test</scope>
+</dependency>
 ```
 
 Add a static import and use the assertions:
