@@ -9,6 +9,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -27,10 +29,16 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
 
   @Override
   public Result<?, ?> deserialize(JsonParser p,
-                                  DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                                  DeserializationContext ctxt) throws IOException {
     ObjectMapper objectMapper = ((ObjectMapper) p.getCodec());
     ObjectNode node = objectMapper.readTree(p);
-    String resultCase = node.findValue(CASE_FIELD_NAME).textValue();
+    JsonNode caseNode = node.findValue(CASE_FIELD_NAME);
+
+    if (caseNode == null) {
+      throw new JsonMappingException(p, String.format("Could not deserialize input as a Result. The required %s field is missing.", CASE_FIELD_NAME));
+    }
+
+    String resultCase = caseNode.textValue();
     node.remove(CASE_FIELD_NAME);
 
     if (resultCase.equalsIgnoreCase(Case.ERR.toString())) {
