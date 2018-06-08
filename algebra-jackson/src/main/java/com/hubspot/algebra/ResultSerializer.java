@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Table;
 import com.hubspot.algebra.ResultModule.Case;
 
 public class ResultSerializer extends StdSerializer<Result<?, ?>> {
@@ -58,6 +59,8 @@ public class ResultSerializer extends StdSerializer<Result<?, ?>> {
       return new MapFlattener((Map<?, ?>) value);
     } else if (value instanceof Multimap) {
       return new MapFlattener(((Multimap<?, ?>) value).asMap());
+    } else if (value instanceof Table) {
+      return new MapFlattener(((Table<?, ?, ?>) value).rowMap());
     } else {
       return value;
     }
