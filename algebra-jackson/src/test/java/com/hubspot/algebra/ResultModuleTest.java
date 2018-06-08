@@ -2,8 +2,12 @@ package com.hubspot.algebra;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,11 +15,34 @@ import org.junit.Test;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ResultModuleTest {
+
+  private static final Result<TestBean, TestError> BEAN_OK = Result.ok(new TestBean("test"));
+  private static final String BEAN_OK_JSON = "{\"value\":\"test\",\"@result\":\"OK\"}";
+  private static final Result<TestBean, TestBean> BEAN_ERR = Result.err(new TestBean("ERROR"));
+  private static final String BEAN_ERR_JSON = "{\"value\":\"ERROR\",\"@result\":\"ERR\"}";
+  private static final Result<TestBean, TestError> CUSTOM_ENUM_ERR =  Result.err(TestError.ERROR);
+  private static final String CUSTOM_ENUM_ERR_JSON = "{\"name\":\"ERROR\",\"@result\":\"ERR\"}";
+  private static final Result<TestBean, RawError> RAW_ENUM_ERR = Result.err(RawError.ERROR);
+  private static final String RAW_ENUM_ERR_JSON = "{\"@error\":\"ERROR\",\"@result\":\"ERR\"}";
+  private static final Result<String, String> STRING_OK = Result.ok("test");
+  private static final String STRING_OK_JSON = "{\"@ok\":\"test\",\"@result\":\"OK\"}";
+  private static final Result<String, String> STRING_ERR = Result.err("ERROR");
+  private static final String STRING_ERR_JSON = "{\"@error\":\"ERROR\",\"@result\":\"ERR\"}";
+  private static final Result<List<String>, List<String>> LIST_OK = Result.ok(Arrays.asList("val0", "val1"));
+  private static final String LIST_OK_JSON = "{\"@ok\":[\"val0\",\"val1\"],\"@result\":\"OK\"}";
+  private static final Result<List<String>, List<String>> LIST_ERR = Result.err(Arrays.asList("err0", "err1"));
+  private static final String LIST_ERR_JSON = "{\"@error\":[\"err0\",\"err1\"],\"@result\":\"ERR\"}";
+  private static final Result<Map<String, String>, Map<String, String>> MAP_OK = Result.ok(Collections.singletonMap("key", "value"));
+  private static final String MAP_OK_JSON = "{\"@ok\":{\"key\":\"value\"},\"@result\":\"OK\"}";
+  private static final Result<Map<String, String>, Map<String, String>> MAP_ERR = Result.err(Collections.singletonMap("key", "value"));
+  private static final String MAP_ERR_JSON = "{\"@error\":{\"key\":\"value\"},\"@result\":\"ERR\"}";
 
   private static ObjectMapper objectMapper;
 
@@ -24,124 +51,193 @@ public class ResultModuleTest {
     objectMapper = new ObjectMapper().registerModule(new ResultModule());
   }
 
-  private static final String EXPECTED_OK = "{\"value\":\"test\",\"@result\":\"OK\"}";
-  private static final String EXPECTED_ERR = "{\"name\":\"ERROR\",\"@result\":\"ERR\"}";
-  private static final String EXPECTED_RAW_ERR = "{\"@error\":\"ERROR\",\"@result\":\"ERR\"}";
-  private static final String EXPECTED_STRING_OK = "{\"@ok\":\"test\",\"@result\":\"OK\"}";
-  private static final String EXPECTED_STRING_ERR = "{\"@error\":\"ERROR\",\"@result\":\"ERR\"}";
-  private static final String EXPECTED_LIST_OK = "{\"@ok\":[\"val0\",\"val1\"],\"@result\":\"OK\"}";
-  private static final String EXPECTED_LIST_ERR = "{\"@error\":[\"err0\",\"err1\"],\"@result\":\"ERR\"}";
-
   @Test
-  public void itSerializesOk() throws Exception {
-    Result<TestBean, TestError> result = Result.ok(new TestBean("test"));
-
-    assertThat(objectMapper.writeValueAsString(result)).isEqualTo(EXPECTED_OK);
+  public void itSerializesBeanOk() throws Exception {
+    itSerializes(BEAN_OK, BEAN_OK_JSON);
   }
 
   @Test
-  public void itSerializesErr() throws Exception {
-    Result<TestBean, TestError> result = Result.err(TestError.ERROR);
+  public void itSerializesBeanErr() throws Exception {
+    itSerializes(BEAN_ERR, BEAN_ERR_JSON);
+  }
 
-    assertThat(objectMapper.writeValueAsString(result)).isEqualTo(EXPECTED_ERR);
+  @Test
+  public void itSerializesCustomEnumErr() throws Exception {
+    itSerializes(CUSTOM_ENUM_ERR, CUSTOM_ENUM_ERR_JSON);
   }
 
   @Test
   public void itSerializesRawErr() throws Exception {
-    Result<TestBean, RawError> result = Result.err(RawError.ERROR);
-
-    assertThat(objectMapper.writeValueAsString(result)).isEqualTo(EXPECTED_RAW_ERR);
+    itSerializes(RAW_ENUM_ERR, RAW_ENUM_ERR_JSON);
   }
 
   @Test
   public void itSerializesStringOk() throws Exception {
-    Result<String, String> result = Result.ok("test");
-    assertThat(objectMapper.writeValueAsString(result)).isEqualTo(EXPECTED_STRING_OK);
+    itSerializes(STRING_OK, STRING_OK_JSON);
   }
 
   @Test
   public void itSerializesStringErr() throws Exception {
-    Result<String, String> result = Result.err("ERROR");
-    assertThat(objectMapper.writeValueAsString(result)).isEqualTo(EXPECTED_STRING_ERR);
+    itSerializes(STRING_ERR, STRING_ERR_JSON);
   }
 
   @Test
   public void itSerializesListOk() throws Exception {
-    Result<List<String>, List<String>> result = Result.ok(Arrays.asList("val0", "val1"));
-    assertThat(objectMapper.writeValueAsString(result)).isEqualTo(EXPECTED_LIST_OK);
+    itSerializes(LIST_OK, LIST_OK_JSON);
   }
 
   @Test
   public void itSerializesListErr() throws Exception {
-    Result<List<String>, List<String>> result = Result.err(Arrays.asList("err0", "err1"));
-    assertThat(objectMapper.writeValueAsString(result)).isEqualTo(EXPECTED_LIST_ERR);
+    itSerializes(LIST_ERR, LIST_ERR_JSON);
   }
 
   @Test
-  public void itDeserializesOk() throws Exception {
-    Result<TestBean, TestError> result = objectMapper.readValue(EXPECTED_OK, new TypeReference<Result<TestBean, TestError>>(){});
-
-    assertThat(result.isOk()).isTrue();
-    assertThat(result.unwrapOrElseThrow().getValue()).isEqualTo("test");
+  public void itSerializesMapOk() throws Exception {
+    itSerializes(MAP_OK, MAP_OK_JSON);
   }
 
   @Test
-  public void itDeserializesErr() throws Exception {
-    Result<TestBean, TestError> result = objectMapper.readValue(EXPECTED_ERR, new TypeReference<Result<TestBean, TestError>>(){});
-
-    assertThat(result.isErr()).isTrue();
-    assertThat(result.unwrapErrOrElseThrow()).isEqualTo(TestError.ERROR);
+  public void itSerializesMapErr() throws Exception {
+    itSerializes(MAP_ERR, MAP_ERR_JSON);
   }
 
   @Test
-  public void itDeserializesRawErr() throws Exception {
-    Result<TestBean, RawError> result = objectMapper.readValue(EXPECTED_RAW_ERR, new TypeReference<Result<TestBean, RawError>>(){});
+  public void itDeserializesBeanOk() throws Exception {
+    itDeserializes(
+        BEAN_OK_JSON,
+        new TypeReference<Result<TestBean, TestError>>(){},
+        BEAN_OK
+    );
+  }
 
-    assertThat(result.isErr()).isTrue();
-    assertThat(result.unwrapErrOrElseThrow()).isEqualTo(RawError.ERROR);
+  @Test
+  public void itDeserializesBeanErr() throws Exception {
+    itDeserializes(
+        BEAN_ERR_JSON,
+        new TypeReference<Result<TestBean, TestBean>>(){},
+        BEAN_ERR
+    );
+  }
+
+  @Test
+  public void itDeserializesCustomEnumErr() throws Exception {
+    itDeserializes(
+        CUSTOM_ENUM_ERR_JSON,
+        new TypeReference<Result<TestBean, TestError>>(){},
+        CUSTOM_ENUM_ERR
+    );
+  }
+
+  @Test
+  public void itDeserializesRawEnumErr() throws Exception {
+    itDeserializes(
+        RAW_ENUM_ERR_JSON,
+        new TypeReference<Result<TestBean, RawError>>(){},
+        RAW_ENUM_ERR
+    );
   }
 
   @Test
   public void itDeserializesStringOk() throws Exception {
-    Result<String, String> actual = objectMapper.readValue(EXPECTED_STRING_OK, new TypeReference<Result<String, String>>(){});
-    assertThat(actual).isEqualTo(Result.ok("test"));
+    itDeserializes(
+        STRING_OK_JSON,
+        new TypeReference<Result<String, String>>(){},
+        STRING_OK
+    );
   }
 
   @Test
   public void itDeserializesStringErr() throws Exception {
-    Result<String, String> actual = objectMapper.readValue(EXPECTED_STRING_ERR, new TypeReference<Result<String, String>>(){});
-    assertThat(actual).isEqualTo(Result.err("ERROR"));
+    itDeserializes(
+        STRING_ERR_JSON,
+        new TypeReference<Result<String, String>>(){},
+        STRING_ERR
+    );
   }
 
   @Test
   public void itDeserializesListOk() throws Exception {
-    Result<List<String>, List<String>> actual = objectMapper.readValue(EXPECTED_LIST_OK, new TypeReference<Result<List<String>, List<String>>>(){});
-    assertThat(actual).isEqualTo(Result.ok(Arrays.asList("val0", "val1")));
+    itDeserializes(
+        LIST_OK_JSON,
+        new TypeReference<Result<List<String>, List<String>>>(){},
+        LIST_OK
+    );
   }
 
   @Test
   public void itDeserializesListErr() throws Exception {
-    Result<List<String>, List<String>> actual = objectMapper.readValue(EXPECTED_LIST_ERR, new TypeReference<Result<List<String>, List<String>>>(){});
-    assertThat(actual).isEqualTo(Result.err(Arrays.asList("err0", "err1")));
+    itDeserializes(
+        LIST_ERR_JSON,
+        new TypeReference<Result<List<String>, List<String>>>(){},
+        LIST_ERR
+    );
+  }
+
+  @Test
+  public void itDeserializesMapOk() throws Exception {
+    itDeserializes(
+        MAP_OK_JSON,
+        new TypeReference<Result<Map<String, String>, Map<String, String>>>(){},
+        MAP_OK
+    );
+  }
+
+  @Test
+  public void itDeserializesMapErr() throws Exception {
+    itDeserializes(
+        MAP_ERR_JSON,
+        new TypeReference<Result<Map<String, String>, Map<String, String>>>(){},
+        MAP_ERR
+    );
+  }
+
+  private void itSerializes(Result<?, ?> result, String expectedJson) throws JsonProcessingException {
+    assertThat(objectMapper.writeValueAsString(result)).isEqualTo(expectedJson);
+  }
+
+  private <OK, ERR> void itDeserializes(
+      String inputJson,
+      TypeReference<Result<OK, ERR>> type,
+      Result<OK, ERR> expected
+  ) throws IOException {
+    Result<List<String>, List<String>> actual = objectMapper.readValue(inputJson, type);
+    assertThat(actual).isEqualTo(expected);
   }
 
   static class TestBean {
-    private String value;
+    private final String value;
 
-    public TestBean(String value) {
+    @JsonCreator
+    public TestBean(@JsonProperty("value") String value) {
       this.value = value;
-    }
-
-    public TestBean() {
     }
 
     public String getValue() {
       return value;
     }
 
-    public TestBean setValue(String value) {
-      this.value = value;
-      return this;
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      } else if (obj == null || this.getClass() != obj.getClass()) {
+        return false;
+      }
+      TestBean that = (TestBean) obj;
+      return Objects.equals(this.value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+      return new StringBuilder("TestBean{")
+          .append("value='").append(value).append('\'')
+          .append('}')
+          .toString();
     }
   }
 
