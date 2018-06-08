@@ -1,6 +1,7 @@
 package com.hubspot.algebra;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,8 +19,14 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Table;
 
 public class ResultModuleTest {
 
@@ -27,28 +34,46 @@ public class ResultModuleTest {
   private static final String BEAN_OK_JSON = "{\"value\":\"test\",\"@result\":\"OK\"}";
   private static final Result<TestBean, TestBean> BEAN_ERR = Result.err(new TestBean("ERROR"));
   private static final String BEAN_ERR_JSON = "{\"value\":\"ERROR\",\"@result\":\"ERR\"}";
+
   private static final Result<TestBean, TestError> CUSTOM_ENUM_ERR =  Result.err(TestError.ERROR);
   private static final String CUSTOM_ENUM_ERR_JSON = "{\"name\":\"ERROR\",\"@result\":\"ERR\"}";
   private static final Result<TestBean, RawError> RAW_ENUM_ERR = Result.err(RawError.ERROR);
   private static final String RAW_ENUM_ERR_JSON = "{\"@error\":\"ERROR\",\"@result\":\"ERR\"}";
+
   private static final Result<String, String> STRING_OK = Result.ok("test");
   private static final String STRING_OK_JSON = "{\"@ok\":\"test\",\"@result\":\"OK\"}";
   private static final Result<String, String> STRING_ERR = Result.err("ERROR");
   private static final String STRING_ERR_JSON = "{\"@error\":\"ERROR\",\"@result\":\"ERR\"}";
+
   private static final Result<List<String>, List<String>> LIST_OK = Result.ok(Arrays.asList("val0", "val1"));
   private static final String LIST_OK_JSON = "{\"@ok\":[\"val0\",\"val1\"],\"@result\":\"OK\"}";
   private static final Result<List<String>, List<String>> LIST_ERR = Result.err(Arrays.asList("err0", "err1"));
   private static final String LIST_ERR_JSON = "{\"@error\":[\"err0\",\"err1\"],\"@result\":\"ERR\"}";
+
   private static final Result<Map<String, String>, Map<String, String>> MAP_OK = Result.ok(Collections.singletonMap("key", "value"));
-  private static final String MAP_OK_JSON = "{\"@ok\":{\"key\":\"value\"},\"@result\":\"OK\"}";
+  private static final String MAP_OK_JSON = "{\"key\":\"value\",\"@result\":\"OK\"}";
   private static final Result<Map<String, String>, Map<String, String>> MAP_ERR = Result.err(Collections.singletonMap("key", "value"));
-  private static final String MAP_ERR_JSON = "{\"@error\":{\"key\":\"value\"},\"@result\":\"ERR\"}";
+  private static final String MAP_ERR_JSON = "{\"key\":\"value\",\"@result\":\"ERR\"}";
+
+  private static final Result<Multimap<String, String>, Multimap<String, String>> MULTIMAP_OK = Result.ok(
+      ImmutableMultimap.<String, String> builder().putAll("key", "val0", "val1").build());
+  private static final String MULTIMAP_OK_JSON = "{\"key\":[\"val0\",\"val1\"],\"@result\":\"OK\"}";
+  private static final Result<Multimap<String, String>, Multimap<String, String>> MULTIMAP_ERR = Result.err(
+      ImmutableMultimap.<String, String> builder().putAll("key", "err0", "err1").build());
+  private static final String MULTIMAP_ERR_JSON = "{\"key\":[\"err0\",\"err1\"],\"@result\":\"ERR\"}";
+
+  private static final Result<Table<String, String, String>, Table<String, String, String>> TABLE_OK = Result.ok(
+      ImmutableTable.<String, String, String> builder().put("row", "column", "value").build());
+  private static final String TABLE_OK_JSON = "{\"row\":{\"column\":\"value\"},\"@result\":\"OK\"}";
+  private static final Result<Table<String, String, String>, Table<String, String, String>> TABLE_ERR = Result.err(
+      ImmutableTable.<String, String, String> builder().put("row", "column", "value").build());
+  private static final String TABLE_ERR_JSON = "{\"row\":{\"column\":\"value\"},\"@result\":\"ERR\"}";
 
   private static ObjectMapper objectMapper;
 
   @BeforeClass
   public static void setupClass() {
-    objectMapper = new ObjectMapper().registerModule(new ResultModule());
+    objectMapper = new ObjectMapper().registerModules(new ResultModule(), new GuavaModule());
   }
 
   @Test
@@ -99,6 +124,26 @@ public class ResultModuleTest {
   @Test
   public void itSerializesMapErr() throws Exception {
     itSerializes(MAP_ERR, MAP_ERR_JSON);
+  }
+
+  @Test
+  public void itSerializesMultimapOk() throws Exception {
+    itSerializes(MULTIMAP_OK, MULTIMAP_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesMultimapErr() throws Exception {
+    itSerializes(MULTIMAP_ERR, MULTIMAP_ERR_JSON);
+  }
+
+  @Test
+  public void itSerializesTableOk() throws Exception {
+    itSerializes(TABLE_OK, TABLE_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesTableErr() throws Exception {
+    itSerializes(TABLE_ERR, TABLE_ERR_JSON);
   }
 
   @Test
@@ -189,6 +234,45 @@ public class ResultModuleTest {
         new TypeReference<Result<Map<String, String>, Map<String, String>>>(){},
         MAP_ERR
     );
+  }
+
+  @Test
+  public void itDeserializesMultimapOk() throws Exception {
+    itDeserializes(
+        MULTIMAP_OK_JSON,
+        new TypeReference<Result<Multimap<String, String>, Multimap<String, String>>>() {
+        },
+        MULTIMAP_OK
+    );
+  }
+
+  @Test
+  public void itDeserializesMultimapErr() throws Exception {
+    itDeserializes(
+        MULTIMAP_ERR_JSON,
+        new TypeReference<Result<Multimap<String, String>, Multimap<String, String>>>(){},
+        MULTIMAP_ERR
+    );
+  }
+
+  @Test
+  public void itDeserializesTableOk() throws Exception {
+    assertThatThrownBy(() -> itDeserializes(
+        TABLE_OK_JSON,
+        new TypeReference<Result<Table<String, String, String>, Table<String, String, String>>>(){},
+        TABLE_OK
+    )).isInstanceOf(JsonMappingException.class)
+      .hasMessageStartingWith("Can not construct instance of com.google.common.collect.Table");
+  }
+
+  @Test
+  public void itDeserializesTableErr() throws Exception {
+    assertThatThrownBy(() -> itDeserializes(
+        TABLE_ERR_JSON,
+        new TypeReference<Result<Table<String, String, String>, Table<String, String, String>>>(){},
+        TABLE_ERR
+    )).isInstanceOf(JsonMappingException.class)
+      .hasMessageStartingWith("Can not construct instance of com.google.common.collect.Table");
   }
 
   private void itSerializes(Result<?, ?> result, String expectedJson) throws JsonProcessingException {
