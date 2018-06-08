@@ -44,29 +44,29 @@ public class ResultSerializer extends StdSerializer<Result<?, ?>> {
       JsonGenerator gen,
       SerializerProvider provider
   ) throws IOException {
-    Object unwrappedValue = unwrapValue(value);
-    JsonSerializer<Object> serializer = provider.findTypedValueSerializer(unwrappedValue.getClass(), true, null)
+    Object flattenedValue = flattenValue(value);
+    JsonSerializer<Object> serializer = provider.findTypedValueSerializer(flattenedValue.getClass(), true, null)
                                                 .unwrappingSerializer(null);
     if (!serializer.isUnwrappingSerializer()) {
       gen.writeFieldName(fieldName);
     }
-    serializer.serialize(unwrappedValue, gen, provider);
+    serializer.serialize(flattenedValue, gen, provider);
   }
 
-  private static Object unwrapValue(Object value) {
+  private static Object flattenValue(Object value) {
     if (value instanceof Map) {
-      return new MapUnwrapper((Map<?, ?>) value);
+      return new MapFlattener((Map<?, ?>) value);
     } else if (value instanceof Multimap) {
-      return new MapUnwrapper(((Multimap<?, ?>) value).asMap());
+      return new MapFlattener(((Multimap<?, ?>) value).asMap());
     } else {
       return value;
     }
   }
 
-  public static class MapUnwrapper {
+  private static class MapFlattener {
     private final Map<?, ?> map;
 
-    public MapUnwrapper(Map<?, ?> map) {
+    private MapFlattener(Map<?, ?> map) {
       this.map = map;
     }
 
