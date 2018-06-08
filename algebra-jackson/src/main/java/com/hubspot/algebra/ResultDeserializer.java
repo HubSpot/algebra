@@ -2,6 +2,7 @@ package com.hubspot.algebra;
 
 import static com.hubspot.algebra.ResultModule.CASE_FIELD_NAME;
 import static com.hubspot.algebra.ResultModule.ERROR_FIELD_NAME;
+import static com.hubspot.algebra.ResultModule.OK_FIELD_NAME;
 
 import java.io.IOException;
 
@@ -42,16 +43,21 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
     node.remove(CASE_FIELD_NAME);
 
     if (resultCase.equalsIgnoreCase(Case.ERR.toString())) {
-      if (node.has(ERROR_FIELD_NAME)) {
-        Object err = objectMapper.treeToValue(node.findValue(ERROR_FIELD_NAME), errClass);
-        return Results.err(err);
-      }
-
-      Object err = objectMapper.treeToValue(node, errClass);
+      Object err = deserializeValue(objectMapper, node, ERROR_FIELD_NAME, errClass);
       return Results.err(err);
     } else {
-      Object ok = objectMapper.treeToValue(node, okClass);
+      Object ok = deserializeValue(objectMapper, node, OK_FIELD_NAME, okClass);
       return Results.ok(ok);
     }
+  }
+
+  private static Object deserializeValue(
+      ObjectMapper objectMapper,
+      ObjectNode node,
+      String fieldName,
+      Class<?> clazz
+  ) throws JsonProcessingException {
+    JsonNode valueNode = node.has(fieldName) ? node.findValue(fieldName) : node;
+    return objectMapper.treeToValue(valueNode, clazz);
   }
 }
