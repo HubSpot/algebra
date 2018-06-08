@@ -20,6 +20,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 public class ResultModuleTest {
 
@@ -40,15 +43,21 @@ public class ResultModuleTest {
   private static final Result<List<String>, List<String>> LIST_ERR = Result.err(Arrays.asList("err0", "err1"));
   private static final String LIST_ERR_JSON = "{\"@error\":[\"err0\",\"err1\"],\"@result\":\"ERR\"}";
   private static final Result<Map<String, String>, Map<String, String>> MAP_OK = Result.ok(Collections.singletonMap("key", "value"));
-  private static final String MAP_OK_JSON = "{\"@ok\":{\"key\":\"value\"},\"@result\":\"OK\"}";
+  private static final String MAP_OK_JSON = "{\"key\":\"value\",\"@result\":\"OK\"}";
   private static final Result<Map<String, String>, Map<String, String>> MAP_ERR = Result.err(Collections.singletonMap("key", "value"));
-  private static final String MAP_ERR_JSON = "{\"@error\":{\"key\":\"value\"},\"@result\":\"ERR\"}";
+  private static final String MAP_ERR_JSON = "{\"key\":\"value\",\"@result\":\"ERR\"}";
+  private static final Result<Multimap<String, String>, Multimap<String, String>> MULTIMAP_OK = Result.ok(
+      ImmutableMultimap.<String, String> builder().putAll("key", "val0", "val1").build());
+  private static final String MULTIMAP_OK_JSON = "{\"key\":[\"val0\",\"val1\"],\"@result\":\"OK\"}";
+  private static final Result<Multimap<String, String>, Multimap<String, String>> MULTIMAP_ERR = Result.err(
+      ImmutableMultimap.<String, String> builder().putAll("key", "err0", "err1").build());
+  private static final String MULTIMAP_ERR_JSON = "{\"key\":[\"err0\",\"err1\"],\"@result\":\"ERR\"}";
 
   private static ObjectMapper objectMapper;
 
   @BeforeClass
   public static void setupClass() {
-    objectMapper = new ObjectMapper().registerModule(new ResultModule());
+    objectMapper = new ObjectMapper().registerModules(new ResultModule(), new GuavaModule());
   }
 
   @Test
@@ -99,6 +108,16 @@ public class ResultModuleTest {
   @Test
   public void itSerializesMapErr() throws Exception {
     itSerializes(MAP_ERR, MAP_ERR_JSON);
+  }
+
+  @Test
+  public void itSerializesMultimapOk() throws Exception {
+    itSerializes(MULTIMAP_OK, MULTIMAP_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesMultimapErr() throws Exception {
+    itSerializes(MULTIMAP_ERR, MULTIMAP_ERR_JSON);
   }
 
   @Test
@@ -188,6 +207,25 @@ public class ResultModuleTest {
         MAP_ERR_JSON,
         new TypeReference<Result<Map<String, String>, Map<String, String>>>(){},
         MAP_ERR
+    );
+  }
+
+  @Test
+  public void itDeserializesMultimapOk() throws Exception {
+    itDeserializes(
+        MULTIMAP_OK_JSON,
+        new TypeReference<Result<Multimap<String, String>, Multimap<String, String>>>() {
+        },
+        MULTIMAP_OK
+    );
+  }
+
+  @Test
+  public void itDeserializesMultimapErr() throws Exception {
+    itDeserializes(
+        MULTIMAP_ERR_JSON,
+        new TypeReference<Result<Multimap<String, String>, Multimap<String, String>>>(){},
+        MULTIMAP_ERR
     );
   }
 
