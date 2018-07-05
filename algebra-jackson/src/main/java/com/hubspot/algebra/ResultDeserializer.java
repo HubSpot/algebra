@@ -18,14 +18,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hubspot.algebra.ResultModule.Case;
 
 public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
-  private final Class<?> okClass;
-  private final Class<?> errClass;
+  private final JavaType okType;
+  private final JavaType errType;
 
   public ResultDeserializer(JavaType valueType) {
     super(valueType);
 
-    this.okClass = valueType.getBindings().getBoundType(0).getRawClass();
-    this.errClass = valueType.getBindings().getBoundType(1).getRawClass();
+    this.okType = valueType.getBindings().getBoundType(0);
+    this.errType = valueType.getBindings().getBoundType(1);
   }
 
   @Override
@@ -43,10 +43,10 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
     node.remove(CASE_FIELD_NAME);
 
     if (resultCase.equalsIgnoreCase(Case.ERR.toString())) {
-      Object err = deserializeValue(objectMapper, node, ERROR_FIELD_NAME, errClass);
+      Object err = deserializeValue(objectMapper, node, ERROR_FIELD_NAME, errType);
       return Results.err(err);
     } else {
-      Object ok = deserializeValue(objectMapper, node, OK_FIELD_NAME, okClass);
+      Object ok = deserializeValue(objectMapper, node, OK_FIELD_NAME, okType);
       return Results.ok(ok);
     }
   }
@@ -55,9 +55,9 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
       ObjectMapper objectMapper,
       ObjectNode node,
       String fieldName,
-      Class<?> clazz
-  ) throws JsonProcessingException {
+      JavaType type
+  ) throws IOException {
     JsonNode valueNode = node.has(fieldName) ? node.findValue(fieldName) : node;
-    return objectMapper.treeToValue(valueNode, clazz);
+    return objectMapper.readerFor(type).readValue(valueNode);
   }
 }

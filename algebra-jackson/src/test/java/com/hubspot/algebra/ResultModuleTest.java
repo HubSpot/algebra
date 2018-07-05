@@ -50,6 +50,11 @@ public class ResultModuleTest {
   private static final Result<List<String>, List<String>> LIST_ERR = Result.err(Arrays.asList("err0", "err1"));
   private static final String LIST_ERR_JSON = "{\"@error\":[\"err0\",\"err1\"],\"@result\":\"ERR\"}";
 
+  private static final Result<List<TestBean>, List<TestError>> BEAN_LIST_OK = Result.ok(Arrays.asList(new TestBean("test")));
+  private static final String BEAN_LIST_OK_JSON = "{\"@ok\":[{\"value\":\"test\"}],\"@result\":\"OK\"}";
+  private static final Result<List<TestBean>, List<TestError>> BEAN_LIST_ERR = Result.err(Arrays.asList(TestError.ERROR));
+  private static final String BEAN_LIST_ERR_JSON = "{\"@error\":[{\"name\":\"ERROR\"}],\"@result\":\"ERR\"}";
+
   private static final Result<Map<String, String>, Map<String, String>> MAP_OK = Result.ok(Collections.singletonMap("key", "value"));
   private static final String MAP_OK_JSON = "{\"key\":\"value\",\"@result\":\"OK\"}";
   private static final Result<Map<String, String>, Map<String, String>> MAP_ERR = Result.err(Collections.singletonMap("key", "value"));
@@ -109,6 +114,16 @@ public class ResultModuleTest {
   @Test
   public void itSerializesListOk() throws Exception {
     itSerializes(LIST_OK, LIST_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesListBeanOk() throws Exception {
+    itSerializes(BEAN_LIST_OK, BEAN_LIST_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesListBeanErr() throws Exception {
+    itSerializes(BEAN_LIST_ERR, BEAN_LIST_ERR_JSON);
   }
 
   @Test
@@ -206,6 +221,24 @@ public class ResultModuleTest {
         LIST_OK_JSON,
         new TypeReference<Result<List<String>, List<String>>>(){},
         LIST_OK
+    );
+  }
+
+  @Test
+  public void itDeserializesBeanListOk() throws Exception {
+    itDeserializes(
+        BEAN_LIST_OK_JSON,
+        new TypeReference<Result<List<TestBean>, List<TestError>>>(){},
+        BEAN_LIST_OK
+    );
+  }
+
+  @Test
+  public void itDeserializesBeanListErr() throws Exception {
+    itDeserializes(
+        BEAN_LIST_ERR_JSON,
+        new TypeReference<Result<List<TestBean>, List<TestError>>>(){},
+        BEAN_LIST_ERR
     );
   }
 
