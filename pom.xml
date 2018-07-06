@@ -8,7 +8,7 @@
     <version>18.2</version>
   </parent>
 
-  <artifactId>algebra-public-parent</artifactId>
+  <artifactId>algebra-parent</artifactId>
   <version>1.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
