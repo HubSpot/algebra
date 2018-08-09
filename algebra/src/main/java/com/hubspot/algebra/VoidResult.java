@@ -7,6 +7,10 @@ import org.derive4j.Data;
 import org.derive4j.Derive;
 import org.derive4j.Visibility;
 
+/**
+ * @deprecated use {@link Result#nullOk()} instead.
+ */
+@Deprecated
 @Data(@Derive(withVisibility = Visibility.Package))
 public abstract class VoidResult<ERROR_TYPE> extends Result<Void, ERROR_TYPE>{
 

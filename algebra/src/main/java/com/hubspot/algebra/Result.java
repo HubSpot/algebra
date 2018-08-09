@@ -18,6 +18,14 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return Results.err(error);
   }
 
+  public static <ERROR_TYPE> Result<NullValue, ERROR_TYPE> nullOk() {
+    return Results.ok(NullValue.get());
+  }
+
+  public static <SUCCESS_TYPE> Result<SUCCESS_TYPE, NullValue> nullErr() {
+    return Results.err(NullValue.get());
+  }
+
   Result() {}
 
   public boolean isOk() {
