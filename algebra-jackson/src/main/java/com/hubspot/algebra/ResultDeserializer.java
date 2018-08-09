@@ -58,6 +58,11 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
       JavaType type
   ) throws IOException {
     JsonNode valueNode = node.has(fieldName) ? node.findValue(fieldName) : node;
-    return objectMapper.readerFor(type).readValue(valueNode);
+    if (type.getRawClass() == NullValue.class && valueNode.isNull()) {
+      // Our version of Jackson doesn't allow custom deserialization of null
+      return NullValue.get();
+    } else {
+      return objectMapper.readerFor(type).readValue(valueNode);
+    }
   }
 }

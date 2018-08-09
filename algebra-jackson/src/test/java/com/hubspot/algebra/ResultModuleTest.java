@@ -75,9 +75,9 @@ public class ResultModuleTest {
   private static final String TABLE_ERR_JSON = "{\"row\":{\"column\":\"value\"},\"@result\":\"ERR\"}";
 
   private static final Result<NullValue, String> NULL_OK = Result.nullOk();
-  private static final String NULL_OK_JSON = "{\"@ok\":\"NULL_VALUE\",\"@result\":\"OK\"}";
+  private static final String NULL_OK_JSON = "{\"@ok\":null,\"@result\":\"OK\"}";
   private static final Result<String, NullValue> NULL_ERR = Result.nullErr();
-  private static final String NULL_ERR_JSON = "{\"@error\":\"NULL_VALUE\",\"@result\":\"ERR\"}";
+  private static final String NULL_ERR_JSON = "{\"@error\":null,\"@result\":\"ERR\"}";
 
   private static ObjectMapper objectMapper;
 
@@ -350,7 +350,7 @@ public class ResultModuleTest {
       TypeReference<Result<OK, ERR>> type,
       Result<OK, ERR> expected
   ) throws IOException {
-    Result<List<String>, List<String>> actual = objectMapper.readValue(inputJson, type);
+    Result<OK, ERR> actual = objectMapper.readValue(inputJson, type);
     assertThat(actual).isEqualTo(expected);
   }
 
