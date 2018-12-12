@@ -6,11 +6,11 @@ Generic ADTs in Java.
 To use `algebra` in your project simply include it in your POM:
 
 ```xml
-    <dependency>
-      <groupId>com.hubspot</groupId>
-      <artifactId>algebra</artifactId>
-      <version>1.0</version>
-    </dependency>
+<dependency>
+  <groupId>com.hubspot</groupId>
+  <artifactId>algebra</artifactId>
+  <version>1.2</version>
+</dependency>
 ```
 
 ## Provided Types
@@ -24,7 +24,7 @@ enum Error {
 }
 
 public Result<String, Error> doWork() {
-  if (sucess) {
+  if (success) {
     return Result.ok(result);
   } else if (thing1Broke) {
     return Result.err(Error.BROKEN);
@@ -66,7 +66,7 @@ To use `algebra-testing` in your project simply include it in your POM:
     <dependency>
       <groupId>com.hubspot</groupId>
       <artifactId>algebra-testing</artifactId>
-      <version>1.0</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
 ```
