@@ -74,6 +74,11 @@ public class ResultModuleTest {
       ImmutableTable.<String, String, String> builder().put("row", "column", "value").build());
   private static final String TABLE_ERR_JSON = "{\"row\":{\"column\":\"value\"},\"@result\":\"ERR\"}";
 
+  private static final Result<NullValue, String> NULL_OK = Result.nullOk();
+  private static final String NULL_OK_JSON = "{\"@ok\":null,\"@result\":\"OK\"}";
+  private static final Result<String, NullValue> NULL_ERR = Result.nullErr();
+  private static final String NULL_ERR_JSON = "{\"@error\":null,\"@result\":\"ERR\"}";
+
   private static ObjectMapper objectMapper;
 
   @BeforeClass
@@ -159,6 +164,16 @@ public class ResultModuleTest {
   @Test
   public void itSerializesTableErr() throws Exception {
     itSerializes(TABLE_ERR, TABLE_ERR_JSON);
+  }
+
+  @Test
+  public void itSerializesNullOk() throws Exception {
+    itSerializes(NULL_OK, NULL_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesNullErr() throws Exception {
+    itSerializes(NULL_ERR, NULL_ERR_JSON);
   }
 
   @Test
@@ -308,6 +323,24 @@ public class ResultModuleTest {
       .hasMessageStartingWith("Can not construct instance of com.google.common.collect.Table");
   }
 
+  @Test
+  public void itDeserializesNullOk() throws Exception {
+    itDeserializes(
+        NULL_OK_JSON,
+        new TypeReference<Result<NullValue, String>>(){},
+        NULL_OK
+    );
+  }
+
+  @Test
+  public void itDeserializesNullErr() throws Exception {
+    itDeserializes(
+        NULL_ERR_JSON,
+        new TypeReference<Result<String, NullValue>>(){},
+        NULL_ERR
+    );
+  }
+
   private void itSerializes(Result<?, ?> result, String expectedJson) throws JsonProcessingException {
     assertThat(objectMapper.writeValueAsString(result)).isEqualTo(expectedJson);
   }
@@ -317,7 +350,7 @@ public class ResultModuleTest {
       TypeReference<Result<OK, ERR>> type,
       Result<OK, ERR> expected
   ) throws IOException {
-    Result<List<String>, List<String>> actual = objectMapper.readValue(inputJson, type);
+    Result<OK, ERR> actual = objectMapper.readValue(inputJson, type);
     assertThat(actual).isEqualTo(expected);
   }
 
