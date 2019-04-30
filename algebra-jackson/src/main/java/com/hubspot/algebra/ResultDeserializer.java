@@ -7,12 +7,11 @@ import static com.hubspot.algebra.ResultModule.OK_FIELD_NAME;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hubspot.algebra.ResultModule.Case;
@@ -31,8 +30,8 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
   @Override
   public Result<?, ?> deserialize(JsonParser p,
                                   DeserializationContext ctxt) throws IOException {
-    ObjectMapper objectMapper = ((ObjectMapper) p.getCodec());
-    ObjectNode node = objectMapper.readTree(p);
+    ObjectCodec codec = p.getCodec();
+    ObjectNode node = codec.readTree(p);
     JsonNode caseNode = node.findValue(CASE_FIELD_NAME);
 
     if (caseNode == null) {
@@ -43,16 +42,16 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
     node.remove(CASE_FIELD_NAME);
 
     if (resultCase.equalsIgnoreCase(Case.ERR.toString())) {
-      Object err = deserializeValue(objectMapper, node, ERROR_FIELD_NAME, errType);
+      Object err = deserializeValue(codec, node, ERROR_FIELD_NAME, errType);
       return Results.err(err);
     } else {
-      Object ok = deserializeValue(objectMapper, node, OK_FIELD_NAME, okType);
+      Object ok = deserializeValue(codec, node, OK_FIELD_NAME, okType);
       return Results.ok(ok);
     }
   }
 
   private static Object deserializeValue(
-      ObjectMapper objectMapper,
+      ObjectCodec codec,
       ObjectNode node,
       String fieldName,
       JavaType type
@@ -62,7 +61,7 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
       // Our version of Jackson doesn't allow custom deserialization of null
       return NullValue.get();
     } else {
-      return objectMapper.readerFor(type).readValue(valueNode);
+      return codec.readValue(valueNode.traverse(codec), type);
     }
   }
 }
