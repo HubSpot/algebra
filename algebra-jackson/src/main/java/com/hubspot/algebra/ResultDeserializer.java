@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -31,8 +32,8 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
   @Override
   public Result<?, ?> deserialize(JsonParser p,
                                   DeserializationContext ctxt) throws IOException {
-    ObjectMapper objectMapper = ((ObjectMapper) p.getCodec());
-    ObjectNode node = objectMapper.readTree(p);
+    ObjectCodec objectCodec = p.getCodec();
+    ObjectNode node = objectCodec.readTree(p);
     JsonNode caseNode = node.findValue(CASE_FIELD_NAME);
 
     if (caseNode == null) {
@@ -43,16 +44,16 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
     node.remove(CASE_FIELD_NAME);
 
     if (resultCase.equalsIgnoreCase(Case.ERR.toString())) {
-      Object err = deserializeValue(objectMapper, node, ERROR_FIELD_NAME, errType);
+      Object err = deserializeValue(objectCodec, node, ERROR_FIELD_NAME, errType);
       return Results.err(err);
     } else {
-      Object ok = deserializeValue(objectMapper, node, OK_FIELD_NAME, okType);
+      Object ok = deserializeValue(objectCodec, node, OK_FIELD_NAME, okType);
       return Results.ok(ok);
     }
   }
 
   private static Object deserializeValue(
-      ObjectMapper objectMapper,
+      ObjectCodec objectCodec,
       ObjectNode node,
       String fieldName,
       JavaType type
@@ -62,7 +63,7 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
       // Our version of Jackson doesn't allow custom deserialization of null
       return NullValue.get();
     } else {
-      return objectMapper.readerFor(type).readValue(valueNode);
+      return objectCodec.readValue(valueNode.traverse(objectCodec), type);
     }
   }
 }
