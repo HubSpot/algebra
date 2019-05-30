@@ -10,10 +10,6 @@
 
   <artifactId>algebra</artifactId>
 
-  <!--<properties>
-    <basepom.check.skip-findbugs>true</basepom.check.skip-findbugs>
-  </properties>-->
-
   <dependencies>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
