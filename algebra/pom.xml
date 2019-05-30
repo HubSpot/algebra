@@ -10,9 +10,9 @@
 
   <artifactId>algebra</artifactId>
 
-  <properties>
+  <!--<properties>
     <basepom.check.skip-findbugs>true</basepom.check.skip-findbugs>
-  </properties>
+  </properties>-->
 
   <dependencies>
     <dependency>
