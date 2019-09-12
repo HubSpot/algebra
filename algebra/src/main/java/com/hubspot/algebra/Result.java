@@ -46,6 +46,11 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     Results.getErr(this).ifPresent(consumer);
   }
 
+  /**
+   *
+   * @deprecated Use error().map(...).result() instead
+   */
+  @Deprecated
   public <NEW_ERROR_TYPE> Result<SUCCESS_TYPE, NEW_ERROR_TYPE> mapErr(Function<ERROR_TYPE, NEW_ERROR_TYPE> mapper) {
     return error().map(mapper).result;
   }
