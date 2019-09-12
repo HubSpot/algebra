@@ -157,4 +157,75 @@ public class ResultTest {
     result.ifErr(consumer);
     assertThat(!check.isEmpty());
   }
+
+  @Test
+  public void itMapsErrorTypeViaErrorProjection() {
+    Result<String, Integer> error = Results.err(1);
+    Result<String, Boolean> mapped = error.error().map(i -> i % 2 == 0).result();
+    assertThat(mapped.isErr()).isTrue();
+    assertThat(mapped.unwrapErrOrElseThrow()).isFalse();
+  }
+
+  @Test
+  public void itSkipsMappingErrorTypeViaErrorProjectionWhenNotError() {
+    Result<String, Integer> ok = Results.ok("ok");
+    Result<String, Boolean> mapped = ok.error().map(i -> i % 2 == 0).result();
+    assertThat(mapped.isOk()).isTrue();
+    assertThat(mapped.unwrapOrElseThrow()).isEqualTo("ok");
+  }
+
+  @Test
+  public void itFlatMapsErrorTypeToSuccessViaErrorProjection() {
+    Result<String, Integer> error = Results.err(2);
+    Result<String, Boolean> mapped = error.error()
+        .flatMap(i -> i % 2 == 0 ? Results.ok("ok") : Results.err(false))
+        .result();
+    assertThat(mapped.isOk()).isTrue();
+    assertThat(mapped.unwrapOrElseThrow()).isEqualTo("ok");
+  }
+
+  @Test
+  public void itFlatMapsErrorTypeToErrorViaErrorProjection() {
+    Result<String, Integer> error = Results.err(1);
+    Result<String, Boolean> mapped = error.error()
+        .flatMap(i -> i % 2 == 0 ? Results.ok("ok") : Results.err(false))
+        .result();
+    assertThat(mapped.isErr()).isTrue();
+    assertThat(mapped.unwrapErrOrElseThrow()).isFalse();
+  }
+
+  @Test
+  public void itSkipFlatsMappingErrorTypeViaErrorProjectionWhenNotError() {
+    Result<String, Integer> ok = Results.ok("ok");
+    Result<String, Boolean> mapped = ok.error()
+        .flatMap(i -> i % 2 == 0 ? Results.ok("changed") : Results.err(false))
+        .result();
+    assertThat(mapped.isOk()).isTrue();
+    assertThat(mapped.unwrapOrElseThrow()).isEqualTo("ok");
+  }
+
+  @Test
+  public void itConvertsErrorProjectionToNonEmptyOptionalWhenItIsAnError() {
+    Result<String, Integer> error = Results.err(1);
+    assertThat(error.error().toOptional()).hasValue(1);
+  }
+
+  @Test
+  public void itConvertsErrorProjectionToEmptyOptionalWhenItIsNotAnError() {
+    Result<String, Integer> error = Results.ok("success");
+    assertThat(error.error().toOptional()).isEmpty();
+  }
+
+  @Test
+  public void itReturnsFalseForExistsOnOkErrorProjection() {
+    Result<String, Integer> ok = Results.ok("success");
+    assertThat(ok.error().exists(i -> i > 0)).isFalse();
+  }
+
+  @Test
+  public void itReturnsResultOfPredicateForExistsOnErrorredErrorProjection() {
+    Result<String, Integer> error = Results.err(-1);
+    assertThat(error.error().exists(i -> i > 0)).isFalse();
+    assertThat(error.error().exists(i -> i < 0)).isTrue();
+  }
 }

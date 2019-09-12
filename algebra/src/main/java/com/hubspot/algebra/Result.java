@@ -1,7 +1,9 @@
 package com.hubspot.algebra;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.derive4j.Data;
@@ -45,14 +47,32 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
   }
 
   public <NEW_ERROR_TYPE> Result<SUCCESS_TYPE, NEW_ERROR_TYPE> mapErr(Function<ERROR_TYPE, NEW_ERROR_TYPE> mapper) {
-    return Results.<SUCCESS_TYPE, ERROR_TYPE, NEW_ERROR_TYPE>modErr(mapper).apply(this);
+    return error().map(mapper).result;
   }
 
+  /**
+   *
+   * @deprecated Use map instead as map always implies mapping over the Ok case
+   */
+  @Deprecated
   public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> mapOk(Function<SUCCESS_TYPE, NEW_SUCCESS_TYPE> mapper) {
+    return map(mapper);
+  }
+
+  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> map(Function<SUCCESS_TYPE, NEW_SUCCESS_TYPE> mapper) {
     return Results.<SUCCESS_TYPE, ERROR_TYPE, NEW_SUCCESS_TYPE>modOk(mapper).apply(this);
   }
 
+  /**
+   *
+   * @deprecated Use flatMap instead as flatMap always implies mapping over the Ok case
+   */
+  @Deprecated
   public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> flatMapOk(Function<SUCCESS_TYPE, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>> mapper) {
+    return flatMap(mapper);
+  }
+
+  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> flatMap(Function<SUCCESS_TYPE, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>> mapper) {
     Result<Result<NEW_SUCCESS_TYPE, ERROR_TYPE>, ERROR_TYPE> nestedResult = Results.<SUCCESS_TYPE, ERROR_TYPE, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>>modOk(mapper)
         .apply(this);
 
@@ -111,5 +131,45 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     }
 
     return "Err[" + unwrapErrOrElseThrow().toString() + "]";
+  }
+
+  public ErrorProjection<SUCCESS_TYPE, ERROR_TYPE> error() {
+    return new ErrorProjection<>(this);
+  }
+
+  public static final class ErrorProjection<SUCC_TYPE, ERR_TYPE> {
+    private final Result<SUCC_TYPE, ERR_TYPE> result;
+
+    private ErrorProjection(Result<SUCC_TYPE, ERR_TYPE> result) {
+      this.result = result;
+    }
+
+    public Result<SUCC_TYPE, ERR_TYPE> result() {
+      return result;
+    }
+
+    public <RERR_TYPE> ErrorProjection<SUCC_TYPE, RERR_TYPE> map(Function<ERR_TYPE, RERR_TYPE> mapper) {
+      return new ErrorProjection<>(Results.<SUCC_TYPE, ERR_TYPE, RERR_TYPE>modErr(mapper).apply(result));
+    }
+
+    public <RERR_TYPE> ErrorProjection<SUCC_TYPE, RERR_TYPE> flatMap(Function<ERR_TYPE, Result<SUCC_TYPE, RERR_TYPE>> mapper) {
+      Result<SUCC_TYPE, Result<SUCC_TYPE, RERR_TYPE>> nestedResult = Results.<SUCC_TYPE, ERR_TYPE, Result<SUCC_TYPE, RERR_TYPE>>modErr(mapper).apply(result);
+      Result<SUCC_TYPE, RERR_TYPE> unwrapped = nestedResult.isErr()
+          ? nestedResult.unwrapErrOrElseThrow()
+          : Results.ok(nestedResult.unwrapOrElseThrow());
+      return new ErrorProjection<>(unwrapped);
+    }
+
+    public Optional<ERR_TYPE> toOptional() {
+      if (result.isErr()) {
+        return Optional.of(result.unwrapErrOrElseThrow());
+      } else {
+        return Optional.empty();
+      }
+    }
+
+    public boolean exists(Predicate<ERR_TYPE> predicate) {
+      return toOptional().filter(predicate).isPresent();
+    }
   }
 }
