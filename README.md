@@ -9,7 +9,7 @@ To use `algebra` in your project simply include it in your POM:
 <dependency>
   <groupId>com.hubspot</groupId>
   <artifactId>algebra</artifactId>
-  <version>1.2</version>
+  <version>1.3</version>
 </dependency>
 ```
 
