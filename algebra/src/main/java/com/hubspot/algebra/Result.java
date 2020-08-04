@@ -63,6 +63,17 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return nestedResult.unwrapOrElseThrow();
   }
 
+  public <NEW_ERROR_TYPE> Result<SUCCESS_TYPE, NEW_ERROR_TYPE> flatMapErr(Function<ERROR_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>> mapper) {
+    Result<SUCCESS_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>> nestedResult = Results.<SUCCESS_TYPE, ERROR_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>>modErr(mapper)
+        .apply(this);
+
+    if (nestedResult.isOk()) {
+      return ok(nestedResult.unwrapOrElseThrow());
+    }
+
+    return nestedResult.unwrapErrOrElseThrow();
+  }
+
   public <X extends Throwable> SUCCESS_TYPE unwrapOrElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
     return Results.getOk(this)
         .orElseThrow(exceptionSupplier);
