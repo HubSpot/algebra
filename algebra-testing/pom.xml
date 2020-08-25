@@ -10,6 +10,10 @@
 
   <artifactId>algebra-testing</artifactId>
 
+  <properties>
+    <dep.assertj.version>3.16.1</dep.assertj.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.hubspot</groupId>
