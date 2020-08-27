@@ -20,6 +20,7 @@
 
   <properties>
     <dep.derive4j.version>1.1.0</dep.derive4j.version>
+    <dep.assertj.version>3.16.1</dep.assertj.version>
   </properties>
 
   <dependencyManagement>
