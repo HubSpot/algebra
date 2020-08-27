@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>algebra-parent</artifactId>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.3</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -51,4 +51,8 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <scm>
+    <tag>algebra-parent-1.3</tag>
+  </scm>
 </project>
