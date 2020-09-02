@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.junit.Test;
 
@@ -56,6 +57,20 @@ public class ResultTest {
 
     Result<String, String> mappedOk = OK_RESULT.mapErr(SampleError::name);
     assertThat(mappedOk.unwrapOrElseThrow()).isEqualTo(OK_RESULT.unwrapOrElseThrow());
+  }
+
+
+  @Test
+  public void itFlatMapsErr() throws Exception {
+    Function<SampleError, Result<String, String>> errMapper = (SampleError err) -> Result.err(err.name());
+    Result<String, String> mappedErr = ERR_RESULT.flatMapErr(errMapper);
+    assertThat(mappedErr.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR.name());
+
+    Result<String, String> mappedOk = OK_RESULT.flatMapErr(errMapper);
+    assertThat(mappedOk.unwrapOrElseThrow()).isEqualTo(OK_RESULT.unwrapOrElseThrow());
+
+    mappedErr = ERR_RESULT.flatMapErr(err -> Result.ok("ok!"));
+    assertThat(mappedErr.unwrapOrElseThrow()).isEqualTo("ok!");
   }
 
   @Test
