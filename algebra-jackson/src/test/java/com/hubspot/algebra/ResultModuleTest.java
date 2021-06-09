@@ -193,6 +193,26 @@ public class ResultModuleTest {
   }
 
   @Test
+  public void itSerializesNestedOkOk() throws Exception {
+    itSerializes(NESTED_OK_OK, NESTED_OK_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesNestedOkErr() throws Exception {
+    itSerializes(NESTED_OK_ERR, NESTED_OK_ERR_JSON);
+  }
+
+  @Test
+  public void itSerializesNestedErrOk() throws Exception {
+    itSerializes(NESTED_ERR_OK, NESTED_ERR_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesNestedErrErr() throws Exception {
+    itSerializes(NESTED_ERR_ERR, NESTED_ERR_ERR_JSON);
+  }
+
+  @Test
   public void itDeserializesBeanOk() throws Exception {
     itDeserializes(
         BEAN_OK_JSON,
