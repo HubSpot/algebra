@@ -79,21 +79,21 @@ public class ResultModuleTest {
   private static final Result<String, NullValue> NULL_ERR = Result.nullErr();
   private static final String NULL_ERR_JSON = "{\"@error\":null,\"@result\":\"ERR\"}";
 
-  private static final Result<Map<String, Result<TestBean, TestError>>, Map<String, Result<TestBean, TestError>>> NESTED_OK_OK =
-      Result.ok(Collections.singletonMap("key", Result.ok(new TestBean("test"))));
-  private static final String NESTED_OK_OK_JSON = "{\"key\":{\"value\":\"test\",\"@result\":\"OK\"},\"@result\":\"OK\"}";
+  private static final Result<Result<TestBean, TestError>, Result<TestBean, TestError>> NESTED_OK_OK =
+      Result.ok(Result.ok(new TestBean("test")));
+  private static final String NESTED_OK_OK_JSON = "{\"@ok\":{\"value\":\"test\",\"@result\":\"OK\"},\"@result\":\"OK\"}";
 
-  private static final Result<Map<String, Result<TestBean, TestError>>, Map<String, Result<TestBean, TestError>>> NESTED_OK_ERR =
-      Result.ok(Collections.singletonMap("key", Result.err(TestError.ERROR)));
-  private static final String NESTED_OK_ERR_JSON = "{\"key\":{\"name\":\"ERROR\",\"@result\":\"ERR\"},\"@result\":\"OK\"}";
+  private static final Result<Result<TestBean, TestError>, Result<TestBean, TestError>> NESTED_OK_ERR =
+      Result.ok(Result.err(TestError.ERROR));
+  private static final String NESTED_OK_ERR_JSON = "{\"@ok\":{\"name\":\"ERROR\",\"@result\":\"ERR\"},\"@result\":\"OK\"}";
 
-  private static final Result<Map<String, Result<TestBean, TestError>>, Map<String, Result<TestBean, TestError>>> NESTED_ERR_OK =
-      Result.err(Collections.singletonMap("key", Result.ok(new TestBean("test"))));
-  private static final String NESTED_ERR_OK_JSON = "{\"key\":{\"value\":\"test\",\"@result\":\"OK\"},\"@result\":\"ERR\"}";
+  private static final Result<Result<TestBean, TestError>, Result<TestBean, TestError>> NESTED_ERR_OK =
+      Result.err(Result.ok(new TestBean("test")));
+  private static final String NESTED_ERR_OK_JSON = "{\"@error\":{\"value\":\"test\",\"@result\":\"OK\"},\"@result\":\"ERR\"}";
 
-  private static final Result<Map<String, Result<TestBean, TestError>>, Map<String, Result<TestBean, TestError>>> NESTED_ERR_ERR =
-      Result.err(Collections.singletonMap("key", Result.err(TestError.ERROR)));
-  private static final String NESTED_ERR_ERR_JSON = "{\"key\":{\"name\":\"ERROR\",\"@result\":\"ERR\"},\"@result\":\"ERR\"}";
+  private static final Result<Result<TestBean, TestError>, Result<TestBean, TestError>> NESTED_ERR_ERR =
+      Result.err(Result.err(TestError.ERROR));
+  private static final String NESTED_ERR_ERR_JSON = "{\"@error\":{\"name\":\"ERROR\",\"@result\":\"ERR\"},\"@result\":\"ERR\"}";
 
   private static ObjectMapper objectMapper;
 
@@ -381,7 +381,7 @@ public class ResultModuleTest {
   public void itDeserializesNestedOkOk() throws Exception {
     itDeserializes(
         NESTED_OK_OK_JSON,
-        new TypeReference<Result<Map<String, Result<TestBean, TestError>>, Map<String, Result<TestBean, TestError>>>>(){},
+        new TypeReference<Result<Result<TestBean, TestError>, Result<TestBean, TestError>>>(){},
         NESTED_OK_OK
     );
   }
@@ -390,7 +390,7 @@ public class ResultModuleTest {
   public void itDeserializesNestedOkErr() throws Exception {
     itDeserializes(
         NESTED_OK_ERR_JSON,
-        new TypeReference<Result<Map<String, Result<TestBean, TestError>>, Map<String, Result<TestBean, TestError>>>>(){},
+        new TypeReference<Result<Result<TestBean, TestError>, Result<TestBean, TestError>>>(){},
         NESTED_OK_ERR
     );
   }
@@ -399,7 +399,7 @@ public class ResultModuleTest {
   public void itDeserializesNestedErrOk() throws Exception {
     itDeserializes(
         NESTED_ERR_OK_JSON,
-        new TypeReference<Result<Map<String, Result<TestBean, TestError>>, Map<String, Result<TestBean, TestError>>>>(){},
+        new TypeReference<Result<Result<TestBean, TestError>, Result<TestBean, TestError>>>(){},
         NESTED_ERR_OK
     );
   }
@@ -408,7 +408,7 @@ public class ResultModuleTest {
   public void itDeserializesNestedErrErr() throws Exception {
     itDeserializes(
         NESTED_ERR_ERR_JSON,
-        new TypeReference<Result<Map<String, Result<TestBean, TestError>>, Map<String, Result<TestBean, TestError>>>>(){},
+        new TypeReference<Result<Result<TestBean, TestError>, Result<TestBean, TestError>>>(){},
         NESTED_ERR_ERR
     );
   }
