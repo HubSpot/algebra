@@ -32,7 +32,7 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
                                   DeserializationContext ctxt) throws IOException {
     ObjectCodec codec = p.getCodec();
     ObjectNode node = codec.readTree(p);
-    JsonNode caseNode = node.findValue(CASE_FIELD_NAME);
+    JsonNode caseNode = node.get(CASE_FIELD_NAME);
 
     if (caseNode == null) {
       throw new JsonMappingException(p, String.format("Could not deserialize input as a Result. The required %s field is missing.", CASE_FIELD_NAME));
@@ -56,7 +56,7 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
       String fieldName,
       JavaType type
   ) throws IOException {
-    JsonNode valueNode = node.has(fieldName) ? node.findValue(fieldName) : node;
+    JsonNode valueNode = node.has(fieldName) ? node.get(fieldName) : node;
     if (type.getRawClass() == NullValue.class && valueNode.isNull()) {
       // Our version of Jackson doesn't allow custom deserialization of null
       return NullValue.get();

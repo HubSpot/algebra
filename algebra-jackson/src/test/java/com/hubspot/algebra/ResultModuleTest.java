@@ -79,6 +79,22 @@ public class ResultModuleTest {
   private static final Result<String, NullValue> NULL_ERR = Result.nullErr();
   private static final String NULL_ERR_JSON = "{\"@error\":null,\"@result\":\"ERR\"}";
 
+  private static final Result<Result<TestBean, TestError>, Result<TestBean, TestError>> NESTED_OK_OK =
+      Result.ok(Result.ok(new TestBean("test")));
+  private static final String NESTED_OK_OK_JSON = "{\"@ok\":{\"value\":\"test\",\"@result\":\"OK\"},\"@result\":\"OK\"}";
+
+  private static final Result<Result<TestBean, TestError>, Result<TestBean, TestError>> NESTED_OK_ERR =
+      Result.ok(Result.err(TestError.ERROR));
+  private static final String NESTED_OK_ERR_JSON = "{\"@ok\":{\"name\":\"ERROR\",\"@result\":\"ERR\"},\"@result\":\"OK\"}";
+
+  private static final Result<Result<TestBean, TestError>, Result<TestBean, TestError>> NESTED_ERR_OK =
+      Result.err(Result.ok(new TestBean("test")));
+  private static final String NESTED_ERR_OK_JSON = "{\"@error\":{\"value\":\"test\",\"@result\":\"OK\"},\"@result\":\"ERR\"}";
+
+  private static final Result<Result<TestBean, TestError>, Result<TestBean, TestError>> NESTED_ERR_ERR =
+      Result.err(Result.err(TestError.ERROR));
+  private static final String NESTED_ERR_ERR_JSON = "{\"@error\":{\"name\":\"ERROR\",\"@result\":\"ERR\"},\"@result\":\"ERR\"}";
+
   private static ObjectMapper objectMapper;
 
   @BeforeClass
@@ -174,6 +190,26 @@ public class ResultModuleTest {
   @Test
   public void itSerializesNullErr() throws Exception {
     itSerializes(NULL_ERR, NULL_ERR_JSON);
+  }
+
+  @Test
+  public void itSerializesNestedOkOk() throws Exception {
+    itSerializes(NESTED_OK_OK, NESTED_OK_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesNestedOkErr() throws Exception {
+    itSerializes(NESTED_OK_ERR, NESTED_OK_ERR_JSON);
+  }
+
+  @Test
+  public void itSerializesNestedErrOk() throws Exception {
+    itSerializes(NESTED_ERR_OK, NESTED_ERR_OK_JSON);
+  }
+
+  @Test
+  public void itSerializesNestedErrErr() throws Exception {
+    itSerializes(NESTED_ERR_ERR, NESTED_ERR_ERR_JSON);
   }
 
   @Test
@@ -338,6 +374,42 @@ public class ResultModuleTest {
         NULL_ERR_JSON,
         new TypeReference<Result<String, NullValue>>(){},
         NULL_ERR
+    );
+  }
+
+  @Test
+  public void itDeserializesNestedOkOk() throws Exception {
+    itDeserializes(
+        NESTED_OK_OK_JSON,
+        new TypeReference<Result<Result<TestBean, TestError>, Result<TestBean, TestError>>>(){},
+        NESTED_OK_OK
+    );
+  }
+
+  @Test
+  public void itDeserializesNestedOkErr() throws Exception {
+    itDeserializes(
+        NESTED_OK_ERR_JSON,
+        new TypeReference<Result<Result<TestBean, TestError>, Result<TestBean, TestError>>>(){},
+        NESTED_OK_ERR
+    );
+  }
+
+  @Test
+  public void itDeserializesNestedErrOk() throws Exception {
+    itDeserializes(
+        NESTED_ERR_OK_JSON,
+        new TypeReference<Result<Result<TestBean, TestError>, Result<TestBean, TestError>>>(){},
+        NESTED_ERR_OK
+    );
+  }
+
+  @Test
+  public void itDeserializesNestedErrErr() throws Exception {
+    itDeserializes(
+        NESTED_ERR_ERR_JSON,
+        new TypeReference<Result<Result<TestBean, TestError>, Result<TestBean, TestError>>>(){},
+        NESTED_ERR_ERR
     );
   }
 
