@@ -44,6 +44,11 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     Results.getErr(this).ifPresent(consumer);
   }
 
+  public void ifOkOrElseError(Consumer<? super SUCCESS_TYPE> okConsumer, Consumer<? super ERROR_TYPE> errConsumer) {
+    Results.getOk(this).ifPresent(okConsumer);
+    Results.getErr(this).ifPresent(errConsumer);
+  }
+
   public <NEW_ERROR_TYPE> Result<SUCCESS_TYPE, NEW_ERROR_TYPE> mapErr(Function<ERROR_TYPE, NEW_ERROR_TYPE> mapper) {
     return Results.<SUCCESS_TYPE, ERROR_TYPE, NEW_ERROR_TYPE>modErr(mapper).apply(this);
   }
