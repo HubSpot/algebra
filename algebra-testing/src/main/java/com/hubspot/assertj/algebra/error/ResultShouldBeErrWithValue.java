@@ -10,11 +10,13 @@ public class ResultShouldBeErrWithValue extends BasicErrorMessageFactory {
     super(format, arguments);
   }
 
-  public static <T, E> ErrorMessageFactory shouldBeOkWithValue(Result<T, E> actual, Object value) {
+  public static <T, E> ErrorMessageFactory shouldBeErrWithValue(Result<T, E> actual, Object error) {
     if (actual.isErr()) {
-      return new ResultShouldBeErrWithValue("Expecting Result to be Err containing <%s> but contained <%s>", value, actual.unwrapErrOrElseThrow());
+      E actualError = actual.unwrapErrOrElseThrow();
+      return new ResultShouldBeErrWithValue("Expecting Result to be Err containing <%s> but contained <%s>. expected:<%s> but was:<%s>", error, actualError, error, actualError);
     } else {
-      return new ResultShouldBeErrWithValue("Expecting Result to be Err containing <%s> but was Ok containing <%s>", value, actual.unwrapOrElseThrow());
+      return new ResultShouldBeErrWithValue("Expecting Result to be Err containing <%s> but was Ok containing <%s>", error, actual.unwrapOrElseThrow());
     }
   }
 }
+
