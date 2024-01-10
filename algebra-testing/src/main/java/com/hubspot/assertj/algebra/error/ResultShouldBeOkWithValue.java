@@ -12,7 +12,8 @@ public class ResultShouldBeOkWithValue extends BasicErrorMessageFactory {
 
   public static <T, E> ErrorMessageFactory shouldBeOkWithValue(Result<T, E> actual, Object value) {
     if (actual.isOk()) {
-      return new ResultShouldBeOkWithValue("Expecting Result to be Ok containing <%s> but contained <%s>", value, actual.unwrapOrElseThrow());
+      T actualValue = actual.unwrapOrElseThrow();
+      return new ResultShouldBeOkWithValue("Expecting Result to be Ok containing <%s> but contained <%s>. expected:<%s> but was:<%s>", value, actualValue, value, actualValue);
     } else {
       return new ResultShouldBeOkWithValue("Expecting Result to be Ok containing <%s> but was Err containing <%s>", value, actual.unwrapErrOrElseThrow());
     }

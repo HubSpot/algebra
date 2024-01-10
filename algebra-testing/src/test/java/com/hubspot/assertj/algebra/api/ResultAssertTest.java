@@ -61,16 +61,20 @@ public class ResultAssertTest {
 
   @Test
   public void itFailsWhenAssertingOkValueOnOkWithDifferentValue() throws Exception {
+    String expected = "Ok";
+    String actual = "Bad";
     assertThatAssertionErrorIsThrown(() -> assertThat(Result.ok("Bad")).containsOk("Ok"),
-                                     "Expecting Result to be Ok containing <\"%s\"> but contained <\"%s\">",
-                                     "Ok", "Bad");
+                                     "Expecting Result to be Ok containing <\"%s\"> but contained <\"%s\">. expected:<\"%s\"> but was:<\"%s\">",
+                                     expected, actual, expected, actual);
   }
 
   @Test
   public void itFailsWhenAssertingErrValueOnErrWithDifferentValue() throws Exception {
+    int expected = 1;
+    int actual = 0;
     assertThatAssertionErrorIsThrown(() -> assertThat(Result.err(0)).containsErr(1),
-                                     "Expecting Result to be Err containing <%s> but contained <%s>",
-                                     1, 0);
+                                     "Expecting Result to be Err containing <%s> but contained <%s>. expected:<%s> but was:<%s>",
+                                     expected, actual, expected, actual);
   }
 
   @Test
