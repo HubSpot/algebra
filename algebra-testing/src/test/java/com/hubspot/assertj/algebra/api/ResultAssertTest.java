@@ -1,11 +1,12 @@
 package com.hubspot.assertj.algebra.api;
 
-import com.hubspot.algebra.Result;
+import static com.hubspot.assertj.algebra.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Test;
 
-import static com.hubspot.assertj.algebra.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import com.hubspot.algebra.Result;
 
 public class ResultAssertTest {
   private void assertThatAssertionErrorIsThrown(ThrowingCallable throwingCallable, String expectedMessage, Object... messageParameters) {
