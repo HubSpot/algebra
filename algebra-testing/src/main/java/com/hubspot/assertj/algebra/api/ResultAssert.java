@@ -47,7 +47,7 @@ public class ResultAssert<T, E> extends AbstractAssert<ResultAssert<T, E>, Resul
   public ResultAssert<T, E> containsErr(Object value) {
     Objects.instance().assertNotNull(info, actual);
     if (!actual.isErr() || !actual.unwrapErrOrElseThrow().equals(value)) {
-      throw failures.failure(info, ResultShouldBeErrWithValue.shouldBeOkWithValue(actual, value));
+      throw failures.failure(info, ResultShouldBeErrWithValue.shouldBeErrWithValue(actual, value));
     }
     return this;
   }
