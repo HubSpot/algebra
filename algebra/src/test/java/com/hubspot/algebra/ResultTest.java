@@ -174,19 +174,19 @@ public class ResultTest {
   }
 
   @Test
-  public void itPassesWhenConsumingOkOnIfOkOrErr() throws Exception {
+  public void itConsumesOks() throws Exception {
     List<String> okResults = new ArrayList<>();
     List<SampleError> errorResults = Collections.emptyList();
-    OK_RESULT.ifOkOrErr(okResults::add, errorResults::add);
+    OK_RESULT.consume(okResults::add, errorResults::add);
     assertThat(okResults).contains(OK_RESULT.unwrapOrElseThrow());
     assertThat(errorResults).isEmpty();
   }
 
   @Test
-  public void itPassesWhenConsumingErrorOnIfOkOrErr() throws Exception {
+  public void itConsumesErrors() throws Exception {
     List<String> okResults = Collections.emptyList();
     List<SampleError> errorResults = new ArrayList<>();
-    ERR_RESULT.ifOkOrErr(okResults::add, errorResults::add);
+    ERR_RESULT.consume(okResults::add, errorResults::add);
     assertThat(okResults).isEmpty();
     assertThat(errorResults).contains(ERR_RESULT.unwrapErrOrElseThrow());
   }
