@@ -177,7 +177,7 @@ public class ResultTest {
   public void itConsumesOks() throws Exception {
     List<String> okResults = new ArrayList<>();
     List<SampleError> errorResults = Collections.emptyList();
-    OK_RESULT.consume(okResults::add, errorResults::add);
+    OK_RESULT.consume(errorResults::add, okResults::add);
     assertThat(okResults).contains(OK_RESULT.unwrapOrElseThrow());
     assertThat(errorResults).isEmpty();
   }
@@ -186,7 +186,7 @@ public class ResultTest {
   public void itConsumesErrors() throws Exception {
     List<String> okResults = Collections.emptyList();
     List<SampleError> errorResults = new ArrayList<>();
-    ERR_RESULT.consume(okResults::add, errorResults::add);
+    ERR_RESULT.consume(errorResults::add, okResults::add);
     assertThat(okResults).isEmpty();
     assertThat(errorResults).contains(ERR_RESULT.unwrapErrOrElseThrow());
   }

@@ -44,7 +44,7 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     Results.getErr(this).ifPresent(consumer);
   }
 
-  public void consume(Consumer<? super SUCCESS_TYPE> okConsumer, Consumer<? super ERROR_TYPE> errConsumer) {
+  public void consume(Consumer<? super ERROR_TYPE> errConsumer, Consumer<? super SUCCESS_TYPE> okConsumer) {
     Results.getOk(this).ifPresent(okConsumer);
     Results.getErr(this).ifPresent(errConsumer);
   }
