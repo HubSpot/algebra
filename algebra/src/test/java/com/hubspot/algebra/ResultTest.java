@@ -3,14 +3,15 @@ package com.hubspot.algebra;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.junit.Test;
+
+import com.google.common.collect.ImmutableList;
 
 public class ResultTest {
   private static final String SAMPLE_STRING = "Hello";
