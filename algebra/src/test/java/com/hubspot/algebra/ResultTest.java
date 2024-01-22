@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -171,5 +172,23 @@ public class ResultTest {
     Result<Integer, ImmutableList<String>> result = Result.err(ImmutableList.of(SAMPLE_STRING));
     result.ifErr(consumer);
     assertThat(!check.isEmpty());
+  }
+
+  @Test
+  public void itConsumesOks() throws Exception {
+    List<String> okResults = new ArrayList<>();
+    List<SampleError> errorResults = Collections.emptyList();
+    OK_RESULT.consume(errorResults::add, okResults::add);
+    assertThat(okResults).contains(OK_RESULT.unwrapOrElseThrow());
+    assertThat(errorResults).isEmpty();
+  }
+
+  @Test
+  public void itConsumesErrors() throws Exception {
+    List<String> okResults = Collections.emptyList();
+    List<SampleError> errorResults = new ArrayList<>();
+    ERR_RESULT.consume(errorResults::add, okResults::add);
+    assertThat(okResults).isEmpty();
+    assertThat(errorResults).contains(ERR_RESULT.unwrapErrOrElseThrow());
   }
 }
