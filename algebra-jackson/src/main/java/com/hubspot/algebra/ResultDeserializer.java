@@ -4,8 +4,6 @@ import static com.hubspot.algebra.ResultModule.CASE_FIELD_NAME;
 import static com.hubspot.algebra.ResultModule.ERROR_FIELD_NAME;
 import static com.hubspot.algebra.ResultModule.OK_FIELD_NAME;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -15,27 +13,34 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hubspot.algebra.ResultModule.Case;
+import java.io.IOException;
 
 public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
+
   private final JavaType okType;
   private final JavaType errType;
 
   public ResultDeserializer(JavaType valueType) {
     super(valueType);
-
     this.okType = valueType.getBindings().getBoundType(0);
     this.errType = valueType.getBindings().getBoundType(1);
   }
 
   @Override
-  public Result<?, ?> deserialize(JsonParser p,
-                                  DeserializationContext ctxt) throws IOException {
+  public Result<?, ?> deserialize(JsonParser p, DeserializationContext ctxt)
+    throws IOException {
     ObjectCodec codec = p.getCodec();
     ObjectNode node = codec.readTree(p);
     JsonNode caseNode = node.get(CASE_FIELD_NAME);
 
     if (caseNode == null) {
-      throw new JsonMappingException(p, String.format("Could not deserialize input as a Result. The required %s field is missing.", CASE_FIELD_NAME));
+      throw new JsonMappingException(
+        p,
+        String.format(
+          "Could not deserialize input as a Result. The required %s field is missing.",
+          CASE_FIELD_NAME
+        )
+      );
     }
 
     String resultCase = caseNode.textValue();
@@ -51,10 +56,10 @@ public class ResultDeserializer extends StdDeserializer<Result<?, ?>> {
   }
 
   private static Object deserializeValue(
-      ObjectCodec codec,
-      ObjectNode node,
-      String fieldName,
-      JavaType type
+    ObjectCodec codec,
+    ObjectNode node,
+    String fieldName,
+    JavaType type
   ) throws IOException {
     JsonNode valueNode = node.has(fieldName) ? node.get(fieldName) : node;
     if (type.getRawClass() == NullValue.class && valueNode.isNull()) {

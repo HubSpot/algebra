@@ -13,6 +13,10 @@
   <dependencies>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
     <dependency>
@@ -24,17 +28,8 @@
       <artifactId>hubspot-style</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.hubspot.immutables</groupId>
-      <artifactId>immutables-exceptions</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.immutables</groupId>
-      <artifactId>value</artifactId>
-      <scope>provided</scope>
+      <groupId>org.derive4j</groupId>
+      <artifactId>derive4j-annotation</artifactId>
     </dependency>
     <dependency>
       <groupId>org.derive4j</groupId>
@@ -42,8 +37,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.derive4j</groupId>
-      <artifactId>derive4j-annotation</artifactId>
+      <groupId>org.immutables</groupId>
+      <artifactId>value</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

@@ -3,13 +3,13 @@ package com.hubspot.algebra;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import org.derive4j.Data;
 import org.derive4j.Derive;
 import org.derive4j.Visibility;
 
 @Data(@Derive(withVisibility = Visibility.Package))
 public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
+
   public static <SUCCESS_TYPE, E> Result<SUCCESS_TYPE, E> ok(SUCCESS_TYPE success) {
     return Results.ok(success);
   }
@@ -44,22 +44,32 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     Results.getErr(this).ifPresent(consumer);
   }
 
-  public void consume(Consumer<? super ERROR_TYPE> errConsumer, Consumer<? super SUCCESS_TYPE> okConsumer) {
+  public void consume(
+    Consumer<? super ERROR_TYPE> errConsumer,
+    Consumer<? super SUCCESS_TYPE> okConsumer
+  ) {
     ifOk(okConsumer);
     ifErr(errConsumer);
   }
 
-  public <NEW_ERROR_TYPE> Result<SUCCESS_TYPE, NEW_ERROR_TYPE> mapErr(Function<ERROR_TYPE, NEW_ERROR_TYPE> mapper) {
+  public <NEW_ERROR_TYPE> Result<SUCCESS_TYPE, NEW_ERROR_TYPE> mapErr(
+    Function<ERROR_TYPE, NEW_ERROR_TYPE> mapper
+  ) {
     return Results.<SUCCESS_TYPE, ERROR_TYPE, NEW_ERROR_TYPE>modErr(mapper).apply(this);
   }
 
-  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> mapOk(Function<SUCCESS_TYPE, NEW_SUCCESS_TYPE> mapper) {
+  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> mapOk(
+    Function<SUCCESS_TYPE, NEW_SUCCESS_TYPE> mapper
+  ) {
     return Results.<SUCCESS_TYPE, ERROR_TYPE, NEW_SUCCESS_TYPE>modOk(mapper).apply(this);
   }
 
-  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> flatMapOk(Function<SUCCESS_TYPE, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>> mapper) {
-    Result<Result<NEW_SUCCESS_TYPE, ERROR_TYPE>, ERROR_TYPE> nestedResult = Results.<SUCCESS_TYPE, ERROR_TYPE, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>>modOk(mapper)
-        .apply(this);
+  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> flatMapOk(
+    Function<SUCCESS_TYPE, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>> mapper
+  ) {
+    Result<Result<NEW_SUCCESS_TYPE, ERROR_TYPE>, ERROR_TYPE> nestedResult = Results
+      .<SUCCESS_TYPE, ERROR_TYPE, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>>modOk(mapper)
+      .apply(this);
 
     if (nestedResult.isErr()) {
       return err(nestedResult.unwrapErrOrElseThrow());
@@ -68,9 +78,12 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return nestedResult.unwrapOrElseThrow();
   }
 
-  public <NEW_ERROR_TYPE> Result<SUCCESS_TYPE, NEW_ERROR_TYPE> flatMapErr(Function<ERROR_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>> mapper) {
-    Result<SUCCESS_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>> nestedResult = Results.<SUCCESS_TYPE, ERROR_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>>modErr(mapper)
-        .apply(this);
+  public <NEW_ERROR_TYPE> Result<SUCCESS_TYPE, NEW_ERROR_TYPE> flatMapErr(
+    Function<ERROR_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>> mapper
+  ) {
+    Result<SUCCESS_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>> nestedResult = Results
+      .<SUCCESS_TYPE, ERROR_TYPE, Result<SUCCESS_TYPE, NEW_ERROR_TYPE>>modErr(mapper)
+      .apply(this);
 
     if (nestedResult.isOk()) {
       return ok(nestedResult.unwrapOrElseThrow());
@@ -79,12 +92,15 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return nestedResult.unwrapErrOrElseThrow();
   }
 
-  public <X extends Throwable> SUCCESS_TYPE unwrapOrElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-    return Results.getOk(this)
-        .orElseThrow(exceptionSupplier);
+  public <X extends Throwable> SUCCESS_TYPE unwrapOrElseThrow(
+    Supplier<? extends X> exceptionSupplier
+  ) throws X {
+    return Results.getOk(this).orElseThrow(exceptionSupplier);
   }
 
-  public <X extends Throwable> SUCCESS_TYPE unwrapOrElseThrow(Function<ERROR_TYPE, ? extends X> exceptionMapper) throws X {
+  public <X extends Throwable> SUCCESS_TYPE unwrapOrElseThrow(
+    Function<ERROR_TYPE, ? extends X> exceptionMapper
+  ) throws X {
     return unwrapOrElseThrow(() -> exceptionMapper.apply(Results.getErr(this).get()));
   }
 
@@ -96,12 +112,15 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return unwrapOrElseThrow(() -> new IllegalStateException(message));
   }
 
-  public <X extends Throwable> ERROR_TYPE unwrapErrOrElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-    return Results.getErr(this)
-        .orElseThrow(exceptionSupplier);
+  public <X extends Throwable> ERROR_TYPE unwrapErrOrElseThrow(
+    Supplier<? extends X> exceptionSupplier
+  ) throws X {
+    return Results.getErr(this).orElseThrow(exceptionSupplier);
   }
 
-  public <X extends Throwable> ERROR_TYPE unwrapErrOrElseThrow(Function<SUCCESS_TYPE, ? extends X> exceptionMapper) throws X {
+  public <X extends Throwable> ERROR_TYPE unwrapErrOrElseThrow(
+    Function<SUCCESS_TYPE, ? extends X> exceptionMapper
+  ) throws X {
     return unwrapErrOrElseThrow(() -> exceptionMapper.apply(Results.getOk(this).get()));
   }
 
@@ -117,6 +136,7 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
 
   @Override
   public abstract int hashCode();
+
   @Override
   public abstract boolean equals(Object obj);
 
