@@ -15,7 +15,6 @@ public class VoidResultTest {
     assertThat(OK_RESULT.isErr()).isFalse();
   }
 
-
   @Test
   public void itHandlesErr() throws Exception {
     assertThat(ERR_RESULT.isOk()).isFalse();

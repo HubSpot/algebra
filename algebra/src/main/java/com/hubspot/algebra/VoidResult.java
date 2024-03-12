@@ -2,7 +2,6 @@ package com.hubspot.algebra;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
-
 import org.derive4j.Data;
 import org.derive4j.Derive;
 import org.derive4j.Visibility;
@@ -12,7 +11,7 @@ import org.derive4j.Visibility;
  */
 @Deprecated
 @Data(@Derive(withVisibility = Visibility.Package))
-public abstract class VoidResult<ERROR_TYPE> extends Result<Void, ERROR_TYPE>{
+public abstract class VoidResult<ERROR_TYPE> extends Result<Void, ERROR_TYPE> {
 
   public static <E> VoidResult<E> ok() {
     return VoidResults.ok(null);
@@ -22,7 +21,7 @@ public abstract class VoidResult<ERROR_TYPE> extends Result<Void, ERROR_TYPE>{
     return VoidResults.err(error);
   }
 
-  VoidResult() { }
+  VoidResult() {}
 
   @Override
   public boolean isOk() {
@@ -35,14 +34,18 @@ public abstract class VoidResult<ERROR_TYPE> extends Result<Void, ERROR_TYPE>{
   }
 
   @Override
-  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> mapOk(Function<Void, NEW_SUCCESS_TYPE> mapper) {
-    return this.match(Results::err,
-        (ok) -> Results.ok(mapper.apply(null)));
+  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> mapOk(
+    Function<Void, NEW_SUCCESS_TYPE> mapper
+  ) {
+    return this.match(Results::err, ok -> Results.ok(mapper.apply(null)));
   }
 
   @Override
-  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> flatMapOk(Function<Void, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>> mapper) {
-    Result<Result<NEW_SUCCESS_TYPE, ERROR_TYPE>, ERROR_TYPE> nestedResult = this.mapOk(mapper);
+  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> flatMapOk(
+    Function<Void, Result<NEW_SUCCESS_TYPE, ERROR_TYPE>> mapper
+  ) {
+    Result<Result<NEW_SUCCESS_TYPE, ERROR_TYPE>, ERROR_TYPE> nestedResult =
+      this.mapOk(mapper);
 
     if (nestedResult.isErr()) {
       return err(nestedResult.unwrapErrOrElseThrow());
@@ -52,5 +55,4 @@ public abstract class VoidResult<ERROR_TYPE> extends Result<Void, ERROR_TYPE>{
   }
 
   public abstract <R> R match(Function<ERROR_TYPE, R> err, Function<Void, R> ok);
-
 }

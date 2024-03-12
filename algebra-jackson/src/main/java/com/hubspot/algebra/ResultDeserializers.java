@@ -8,10 +8,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.Deserializers;
 
 public class ResultDeserializers extends Deserializers.Base {
+
   @Override
-  public JsonDeserializer<?> findBeanDeserializer(JavaType type,
-                                                  DeserializationConfig config,
-                                                  BeanDescription beanDesc) throws JsonMappingException {
+  public JsonDeserializer<?> findBeanDeserializer(
+    JavaType type,
+    DeserializationConfig config,
+    BeanDescription beanDesc
+  ) throws JsonMappingException {
     if (type.hasRawClass(Result.class)) {
       return new ResultDeserializer(type);
     }

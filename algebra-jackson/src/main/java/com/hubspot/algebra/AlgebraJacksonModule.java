@@ -5,13 +5,14 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 
 public class AlgebraJacksonModule extends AbstractModule {
+
   @Override
   protected void configure() {
-    Multibinder.newSetBinder(binder(), Module.class)
-        .addBinding()
-        .toInstance(new ResultModule());
+    Multibinder
+      .newSetBinder(binder(), Module.class)
+      .addBinding()
+      .toInstance(new ResultModule());
   }
-
 
   @Override
   public boolean equals(Object o) {

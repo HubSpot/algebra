@@ -3,28 +3,29 @@ package com.hubspot.algebra;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableList;
-
 public class ResultTest {
+
   private static final String SAMPLE_STRING = "Hello";
   private static final Result<String, SampleError> OK_RESULT = Result.ok(SAMPLE_STRING);
-  private static final Result<String, SampleError> ERR_RESULT = Result.err(SampleError.TEST_ERROR);
+  private static final Result<String, SampleError> ERR_RESULT = Result.err(
+    SampleError.TEST_ERROR
+  );
 
   private enum SampleError {
     TEST_ERROR,
     TEST_ERROR_TWO,
-    ;
   }
 
   private static class SampleErrorException extends Exception {
+
     SampleErrorException(SampleError error) {
       super(error.name());
     }
@@ -48,7 +49,8 @@ public class ResultTest {
     assertThat(mappedOk.unwrapOrElseThrow()).isEqualTo(SAMPLE_STRING.length());
 
     Result<Integer, SampleError> mappedErr = ERR_RESULT.mapOk(String::length);
-    assertThat(mappedErr.unwrapErrOrElseThrow()).isEqualTo(ERR_RESULT.unwrapErrOrElseThrow());
+    assertThat(mappedErr.unwrapErrOrElseThrow())
+      .isEqualTo(ERR_RESULT.unwrapErrOrElseThrow());
   }
 
   @Test
@@ -60,10 +62,10 @@ public class ResultTest {
     assertThat(mappedOk.unwrapOrElseThrow()).isEqualTo(OK_RESULT.unwrapOrElseThrow());
   }
 
-
   @Test
   public void itFlatMapsErr() throws Exception {
-    Function<SampleError, Result<String, String>> errMapper = (SampleError err) -> Result.err(err.name());
+    Function<SampleError, Result<String, String>> errMapper = (SampleError err) ->
+      Result.err(err.name());
     Result<String, String> mappedErr = ERR_RESULT.flatMapErr(errMapper);
     assertThat(mappedErr.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR.name());
 
@@ -78,30 +80,33 @@ public class ResultTest {
   public void itProperlyExpectsOk() throws Exception {
     assertThat(OK_RESULT.expect("should not throw this")).isEqualTo(SAMPLE_STRING);
     assertThat(OK_RESULT.unwrapOrElseThrow()).isEqualTo(SAMPLE_STRING);
-    assertThat(OK_RESULT.unwrapOrElseThrow(SampleErrorException::new)).isEqualTo(SAMPLE_STRING);
+    assertThat(OK_RESULT.unwrapOrElseThrow(SampleErrorException::new))
+      .isEqualTo(SAMPLE_STRING);
   }
 
   @Test
   public void itProperlyExpectsErr() throws Exception {
-    assertThat(ERR_RESULT.expectErr("should not throw this")).isEqualTo(SampleError.TEST_ERROR);
+    assertThat(ERR_RESULT.expectErr("should not throw this"))
+      .isEqualTo(SampleError.TEST_ERROR);
     assertThat(ERR_RESULT.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR);
-    assertThat(ERR_RESULT.unwrapErrOrElseThrow(ok -> new RuntimeException(ok))).isEqualTo(SampleError.TEST_ERROR);
+    assertThat(ERR_RESULT.unwrapErrOrElseThrow(ok -> new RuntimeException(ok)))
+      .isEqualTo(SampleError.TEST_ERROR);
   }
 
   @Test
   public void itThrowsWhenExpectIsCalledOnErr() throws Exception {
     String message = "this should throw";
     assertThatExceptionOfType(IllegalStateException.class)
-        .isThrownBy(() -> ERR_RESULT.expect(message))
-        .withMessage(message);
+      .isThrownBy(() -> ERR_RESULT.expect(message))
+      .withMessage(message);
   }
 
   @Test
   public void itThrowsWhenExpectErrIsCalledOnOk() throws Exception {
     String message = "this should throw";
     assertThatExceptionOfType(IllegalStateException.class)
-        .isThrownBy(() -> OK_RESULT.expectErr(message))
-        .withMessage(message);
+      .isThrownBy(() -> OK_RESULT.expectErr(message))
+      .withMessage(message);
   }
 
   @Test(expected = IllegalStateException.class)
@@ -117,15 +122,15 @@ public class ResultTest {
   @Test
   public void itThrowsTheCorrectExceptionWhenUnwrapping() throws Exception {
     assertThatExceptionOfType(SampleErrorException.class)
-        .isThrownBy(() -> ERR_RESULT.unwrapOrElseThrow(SampleErrorException::new))
-        .withMessage(SampleError.TEST_ERROR.name());
+      .isThrownBy(() -> ERR_RESULT.unwrapOrElseThrow(SampleErrorException::new))
+      .withMessage(SampleError.TEST_ERROR.name());
   }
 
   @Test
   public void itThrowsTheCorrectExceptionWhenUnwrappingErr() throws Exception {
     assertThatExceptionOfType(RuntimeException.class)
-        .isThrownBy(() -> OK_RESULT.unwrapErrOrElseThrow(ok -> new RuntimeException(ok)))
-        .withMessage(SAMPLE_STRING);
+      .isThrownBy(() -> OK_RESULT.unwrapErrOrElseThrow(ok -> new RuntimeException(ok)))
+      .withMessage(SAMPLE_STRING);
   }
 
   @Test
@@ -160,7 +165,9 @@ public class ResultTest {
   public void itAllowsConsumerOfOkSuperType() {
     List<String> check = new ArrayList<>();
     Consumer<List<String>> consumer = l -> check.add("I was here.");
-    Result<ImmutableList<String>, SampleError> result = Result.ok(ImmutableList.of(SAMPLE_STRING));
+    Result<ImmutableList<String>, SampleError> result = Result.ok(
+      ImmutableList.of(SAMPLE_STRING)
+    );
     result.ifOk(consumer);
     assertThat(!check.isEmpty());
   }
@@ -169,7 +176,9 @@ public class ResultTest {
   public void itAllowsConsumerOfErrSuperType() {
     List<String> check = new ArrayList<>();
     Consumer<List<String>> consumer = l -> check.add("I was here.");
-    Result<Integer, ImmutableList<String>> result = Result.err(ImmutableList.of(SAMPLE_STRING));
+    Result<Integer, ImmutableList<String>> result = Result.err(
+      ImmutableList.of(SAMPLE_STRING)
+    );
     result.ifErr(consumer);
     assertThat(!check.isEmpty());
   }
