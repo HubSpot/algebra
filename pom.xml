@@ -19,6 +19,7 @@
   </modules>
 
   <properties>
+    <dep.plugin.gpg.version>3.1.0</dep.plugin.gpg.version>
     <dep.derive4j.version>1.1.0</dep.derive4j.version>
     <dep.assertj.version>3.16.1</dep.assertj.version>
   </properties>
@@ -52,4 +53,25 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <additionalDependencies>
+              <additionalDependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>1.3.2</version>
+              </additionalDependency>
+            </additionalDependencies>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
