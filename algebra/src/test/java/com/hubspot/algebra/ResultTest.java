@@ -203,14 +203,22 @@ public class ResultTest {
 
   @Test
   public void itConvertsListOfResultsToResultOfList() {
-    List<Result<Integer, String>> xs = ImmutableList.of(Result.ok(1), Result.ok(2), Result.ok(3));
+    List<Result<Integer, String>> xs = ImmutableList.of(
+      Result.ok(1),
+      Result.ok(2),
+      Result.ok(3)
+    );
     Result<List<Integer>, String> rxs = Result.all(xs);
     assertThat(rxs.unwrapOrElseThrow()).containsExactly(1, 2, 3);
   }
 
   @Test
   public void itConvertsListOfResultsToFirstError() {
-    List<Result<Integer, String>> xs = ImmutableList.of(Result.ok(1), Result.ok(2), Result.err("error"));
+    List<Result<Integer, String>> xs = ImmutableList.of(
+      Result.ok(1),
+      Result.ok(2),
+      Result.err("error")
+    );
     Result<List<Integer>, String> rxs = Result.all(xs);
     assertThat(rxs.unwrapErrOrElseThrow()).isEqualTo("error");
   }

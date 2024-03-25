@@ -29,14 +29,24 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return Results.err(NullValue.get());
   }
 
-  public static <SUCCESS_TYPE, ERROR_TYPE> Result<List<SUCCESS_TYPE>, ERROR_TYPE> all(Collection<Result<SUCCESS_TYPE, ERROR_TYPE>> results) {
-    return results.stream()
+  public static <SUCCESS_TYPE, ERROR_TYPE> Result<List<SUCCESS_TYPE>, ERROR_TYPE> all(
+    Collection<Result<SUCCESS_TYPE, ERROR_TYPE>> results
+  ) {
+    return results
+      .stream()
       .filter(Result::isErr)
       .findFirst()
-      .<Result<List<SUCCESS_TYPE>, ERROR_TYPE>>map(firstError -> Result.err(firstError.unwrapErrOrElseThrow()))
-      .orElseGet(() -> Result.ok(results.stream()
-        .map(Result::unwrapOrElseThrow)
-        .collect(ImmutableList.toImmutableList())));
+      .<Result<List<SUCCESS_TYPE>, ERROR_TYPE>>map(firstError ->
+        Result.err(firstError.unwrapErrOrElseThrow())
+      )
+      .orElseGet(() ->
+        Result.ok(
+          results
+            .stream()
+            .map(Result::unwrapOrElseThrow)
+            .collect(ImmutableList.toImmutableList())
+        )
+      );
   }
 
   Result() {}
