@@ -29,6 +29,17 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return Results.err(NullValue.get());
   }
 
+  /**
+   * Performs a conversion operation that aggregates a collection of Results into a single Result.
+   * <p>
+   * If any of the input Results are errors, the first encountered error is returned in a new Result of type Result<List<SUCCESS_TYPE>, ERROR_TYPE>.
+   * If all input Results are successful, a new Result containing the list of unwrapped success values is returned.
+   *
+   * @param results A Collection of Result instances
+   * @param <SUCCESS_TYPE> The success type of the Results
+   * @param <ERROR_TYPE> The error type of the Results
+   * @return A Result containing either a list of success values or the first encountered error
+   */
   public static <SUCCESS_TYPE, ERROR_TYPE> Result<List<SUCCESS_TYPE>, ERROR_TYPE> all(
     Collection<Result<SUCCESS_TYPE, ERROR_TYPE>> results
   ) {
