@@ -32,7 +32,7 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
   /**
    * Performs a conversion operation that aggregates a collection of Results into a single Result.
    * <p>
-   * If any of the input Results are errors, the first encountered error is returned in a new Result of type Result<List<SUCCESS_TYPE>, ERROR_TYPE>.
+   * If any of the input Results are errors, the first encountered error is returned in a new Result of type Result&lt;List&lt;SUCCESS_TYPE&gt;, ERROR_TYPE&gt;.
    * If all input Results are successful, a new Result containing the list of unwrapped success values is returned.
    *
    * @param results A Collection of Result instances
