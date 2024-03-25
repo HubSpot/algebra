@@ -1,5 +1,8 @@
 package com.hubspot.algebra;
 
+import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -24,6 +27,16 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
 
   public static <SUCCESS_TYPE> Result<SUCCESS_TYPE, NullValue> nullErr() {
     return Results.err(NullValue.get());
+  }
+
+  public static <SUCCESS_TYPE, ERROR_TYPE> Result<List<SUCCESS_TYPE>, ERROR_TYPE> all(Collection<Result<SUCCESS_TYPE, ERROR_TYPE>> results) {
+    return results.stream()
+      .filter(Result::isErr)
+      .findFirst()
+      .<Result<List<SUCCESS_TYPE>, ERROR_TYPE>>map(firstError -> Result.err(firstError.unwrapErrOrElseThrow()))
+      .orElseGet(() -> Result.ok(results.stream()
+        .map(Result::unwrapOrElseThrow)
+        .collect(ImmutableList.toImmutableList())));
   }
 
   Result() {}
