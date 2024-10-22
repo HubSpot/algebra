@@ -200,4 +200,26 @@ public class ResultTest {
     assertThat(okResults).isEmpty();
     assertThat(errorResults).contains(ERR_RESULT.unwrapErrOrElseThrow());
   }
+
+  @Test
+  public void itConvertsListOfResultsToResultOfList() {
+    List<Result<Integer, String>> results = ImmutableList.of(
+      Result.ok(1),
+      Result.ok(2),
+      Result.ok(3)
+    );
+    Result<List<Integer>, String> actual = Result.all(results);
+    assertThat(actual.unwrapOrElseThrow()).containsExactly(1, 2, 3);
+  }
+
+  @Test
+  public void itConvertsListOfResultsToFirstError() {
+    List<Result<Integer, String>> results = ImmutableList.of(
+      Result.ok(1),
+      Result.ok(2),
+      Result.err("error")
+    );
+    Result<List<Integer>, String> actual = Result.all(results);
+    assertThat(actual.unwrapErrOrElseThrow()).isEqualTo("error");
+  }
 }
