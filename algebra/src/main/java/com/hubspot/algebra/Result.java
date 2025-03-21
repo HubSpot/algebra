@@ -32,32 +32,30 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
   /**
    * Performs a conversion operation that aggregates a collection of Results into a single Result.
    * <p>
-   * If any of the input Results are errors, the first encountered error is returned in a new Result of type Result&lt;List&lt;SUCCESS_TYPE&gt;, ERROR_TYPE&gt;.
+   * If any of the input Results are errors, all errors are returned in a new Result of type Result&lt;List&lt;SUCCESS_TYPE>, List&lt;ERROR_TYPE>>.
    * If all input Results are successful, a new Result containing the list of unwrapped success values is returned.
    *
    * @param results A Collection of Result instances
    * @param <SUCCESS_TYPE> The success type of the Results
    * @param <ERROR_TYPE> The error type of the Results
-   * @return A Result containing either a list of success values or the first encountered error
+   * @return A Result containing either a list of success values or a list of error values
    */
-  public static <SUCCESS_TYPE, ERROR_TYPE> Result<List<SUCCESS_TYPE>, ERROR_TYPE> all(
+  public static <SUCCESS_TYPE, ERROR_TYPE> Result<List<SUCCESS_TYPE>, List<ERROR_TYPE>> all(
     Collection<Result<SUCCESS_TYPE, ERROR_TYPE>> results
   ) {
-    return results
+    List<ERROR_TYPE> errors = results
       .stream()
       .filter(Result::isErr)
-      .findFirst()
-      .<Result<List<SUCCESS_TYPE>, ERROR_TYPE>>map(firstError ->
-        Result.err(firstError.unwrapErrOrElseThrow())
-      )
-      .orElseGet(() ->
-        Result.ok(
-          results
-            .stream()
-            .map(Result::unwrapOrElseThrow)
-            .collect(ImmutableList.toImmutableList())
-        )
-      );
+      .map(Result::unwrapErrOrElseThrow)
+      .collect(ImmutableList.toImmutableList());
+    if (!errors.isEmpty()) {
+      return Result.err(errors);
+    }
+    return Result.ok(results
+      .stream()
+      .filter(Result::isOk)
+      .map(Result::unwrapOrElseThrow)
+      .collect(ImmutableList.toImmutableList()));
   }
 
   Result() {}
