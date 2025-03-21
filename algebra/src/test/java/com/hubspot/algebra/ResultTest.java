@@ -220,6 +220,7 @@ public class ResultTest {
       Result.err("error2")
     );
     Result<List<Integer>, List<String>> actual = Result.all(results);
-    assertThat(actual.unwrapErrOrElseThrow()).containsExactlyInAnyOrder("error1", "error2");
+    assertThat(actual.unwrapErrOrElseThrow())
+      .containsExactlyInAnyOrder("error1", "error2");
   }
 }

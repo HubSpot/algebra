@@ -51,11 +51,13 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     if (!errors.isEmpty()) {
       return Result.err(errors);
     }
-    return Result.ok(results
-      .stream()
-      .filter(Result::isOk)
-      .map(Result::unwrapOrElseThrow)
-      .collect(ImmutableList.toImmutableList()));
+    return Result.ok(
+      results
+        .stream()
+        .filter(Result::isOk)
+        .map(Result::unwrapOrElseThrow)
+        .collect(ImmutableList.toImmutableList())
+    );
   }
 
   Result() {}
