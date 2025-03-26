@@ -200,4 +200,19 @@ public class ResultTest {
     assertThat(okResults).isEmpty();
     assertThat(errorResults).contains(ERR_RESULT.unwrapErrOrElseThrow());
   }
+
+  @Test
+  public void itCoercesErr() {
+    Result<String, SampleError> errResult = Result.err(SampleError.TEST_ERROR);
+    Result<Integer, SampleError> coercedErrResult = errResult.coerceErr();
+
+    assertThat(coercedErrResult.isErr()).isTrue();
+    assertThat(coercedErrResult.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void itThrowsWhenCoerceErrCalledOnOk() {
+    Result<String, SampleError> okResult = Result.ok(SAMPLE_STRING);
+    okResult.coerceErr();
+  }
 }

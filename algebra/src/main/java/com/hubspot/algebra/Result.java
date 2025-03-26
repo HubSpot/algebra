@@ -132,6 +132,24 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return unwrapErrOrElseThrow(() -> new IllegalStateException(message));
   }
 
+  /**
+   * Coerces the success type of an error Result to any other type.
+   * This is a no-op for Ok results.
+   * <p />
+   * This method helps when you need to return an error result whose success type
+   * doesn't match the required return type.
+   *
+   * @param <NEW_SUCCESS_TYPE> The new success type parameter
+   * @return A Result with the same error value but a coerced success type
+   * @throws IllegalStateException if called on an Ok Result
+   */
+  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> coerceErr() {
+    if (isOk()) {
+      throw new IllegalStateException("Cannot coerce an Ok result's success type");
+    }
+    return Result.err(unwrapErrOrElseThrow());
+  }
+
   public abstract <R> R match(Function<ERROR_TYPE, R> err, Function<SUCCESS_TYPE, R> ok);
 
   @Override
