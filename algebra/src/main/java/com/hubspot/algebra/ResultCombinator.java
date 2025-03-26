@@ -23,7 +23,7 @@ class ResultCombinator {
   /**
    * Holder for one Result value.
    */
-  static class R1<A, E> {
+  public static class R1<A, E> {
 
     private final A value1;
     private final Result<?, E> error;
@@ -60,7 +60,7 @@ class ResultCombinator {
   /**
    * Holder for two Result values.
    */
-  static class R2<A, B, E> {
+  public static class R2<A, B, E> {
 
     private final A value1;
     private final B value2;
@@ -99,7 +99,7 @@ class ResultCombinator {
   /**
    * Holder for three Result values.
    */
-  static class R3<A, B, C, E> {
+  public static class R3<A, B, C, E> {
 
     private final A value1;
     private final B value2;
@@ -140,7 +140,7 @@ class ResultCombinator {
   /**
    * Holder for four Result values.
    */
-  static class R4<A, B, C, D, E> {
+  public static class R4<A, B, C, D, E> {
 
     private final A value1;
     private final B value2;
@@ -183,7 +183,7 @@ class ResultCombinator {
   /**
    * Holder for five Result values.
    */
-  static class R5<A, B, C, D, E, F> {
+  public static class R5<A, B, C, D, E, F> {
 
     private final A value1;
     private final B value2;
