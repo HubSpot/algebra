@@ -26,6 +26,20 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return Results.err(NullValue.get());
   }
 
+  /**
+   * Start combining multiple Results with type-safety.
+   * Each Result is accumulated while maintaining its type information,
+   * allowing direct access to all values in the combiner function.
+   *
+   * @param <A> Type of the first Result's value
+   * @param <E> Type of the error
+   * @param r1 First Result to combine
+   * @return A builder for further combination
+   */
+  public static <A, E> ResultCombinator.R1<A, E> combine(Result<A, E> r1) {
+    return ResultCombinator.combine(r1);
+  }
+
   Result() {}
 
   public boolean isOk() {

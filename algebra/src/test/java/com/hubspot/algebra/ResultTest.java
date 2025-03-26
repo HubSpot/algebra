@@ -215,4 +215,90 @@ public class ResultTest {
     Result<String, SampleError> okResult = Result.ok(SAMPLE_STRING);
     okResult.coerceErr();
   }
+
+  @Test
+  public void itCombinesTwoOkResults() {
+    Result<String, SampleError> result1 = Result.ok("Hello");
+    Result<Integer, SampleError> result2 = Result.ok(42);
+
+    Result<String, SampleError> combinedResult = Result
+      .combine(result1)
+      .and(result2)
+      .map((str, num) -> str + " " + num);
+
+    assertThat(combinedResult.isOk()).isTrue();
+    assertThat(combinedResult.unwrapOrElseThrow()).isEqualTo("Hello 42");
+  }
+
+  @Test
+  public void itCombinesOkAndErrResults() {
+    Result<String, SampleError> result1 = Result.ok("Hello");
+    Result<Integer, SampleError> result2 = Result.err(SampleError.TEST_ERROR);
+
+    Result<String, SampleError> combinedResult = Result
+      .combine(result1)
+      .and(result2)
+      .map((str, num) -> str + " " + num);
+
+    assertThat(combinedResult.isErr()).isTrue();
+    assertThat(combinedResult.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR);
+  }
+
+  @Test
+  public void itCombinesTwoErrResults() {
+    Result<String, SampleError> result1 = Result.err(SampleError.TEST_ERROR);
+    Result<Integer, SampleError> result2 = Result.err(SampleError.TEST_ERROR_TWO);
+
+    Result<String, SampleError> combinedResult = Result
+      .combine(result1)
+      .and(result2)
+      .map((str, num) -> str + " " + num);
+
+    assertThat(combinedResult.isErr()).isTrue();
+    assertThat(combinedResult.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR);
+  }
+
+  @Test
+  public void itCombinesFiveOkResults() {
+    Result<String, SampleError> result1 = Result.ok("Hello");
+    Result<Integer, SampleError> result2 = Result.ok(42);
+    Result<Double, SampleError> result3 = Result.ok(3.14);
+    Result<Boolean, SampleError> result4 = Result.ok(true);
+    Result<Character, SampleError> result5 = Result.ok('A');
+
+    Result<String, SampleError> combinedResult = Result
+      .combine(result1)
+      .and(result2)
+      .and(result3)
+      .and(result4)
+      .and(result5)
+      .map((str, num, dbl, bool, chr) ->
+        str + " " + num + " " + dbl + " " + bool + " " + chr
+      );
+
+    assertThat(combinedResult.isOk()).isTrue();
+    assertThat(combinedResult.unwrapOrElseThrow()).isEqualTo("Hello 42 3.14 true A");
+  }
+
+  @Test
+  public void itCombinesFiveResultsWithAnErr() {
+    Result<String, SampleError> result1 = Result.ok("Hello");
+    Result<Integer, SampleError> result2 = Result.err(SampleError.TEST_ERROR);
+    Result<Double, SampleError> result3 = Result.ok(3.14);
+    Result<Boolean, SampleError> result4 = Result.ok(true);
+    Result<Character, SampleError> result5 = Result.ok('A');
+
+    Result<String, SampleError> combinedResult = Result
+      .combine(result1)
+      .and(result2)
+      .and(result3)
+      .and(result4)
+      .and(result5)
+      .map((str, num, dbl, bool, chr) ->
+        str + " " + num + " " + dbl + " " + bool + " " + chr
+      );
+
+    assertThat(combinedResult.isErr()).isTrue();
+    assertThat(combinedResult.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR);
+  }
 }
