@@ -2,6 +2,7 @@ package com.hubspot.algebra;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -137,28 +138,28 @@ public class ResultTest {
   public void itCallsConsumerWhenOkPresent() {
     List<String> results = new ArrayList<>();
     OK_RESULT.ifOk(results::add);
-    assertThat(results.contains(SAMPLE_STRING));
+    assertThat(results).contains(SAMPLE_STRING);
   }
 
   @Test
   public void itDoesNotCallConsumerWhenOkAbsent() {
     List<String> results = new ArrayList<>();
     ERR_RESULT.ifOk(results::add);
-    assertThat(results.isEmpty());
+    assertThat(results).isEmpty();
   }
 
   @Test
   public void itCallsConsumerWhenErrPresent() {
     List<SampleError> results = new ArrayList<>();
     ERR_RESULT.ifErr(results::add);
-    assertThat(results.contains(SampleError.TEST_ERROR));
+    assertThat(results).contains(SampleError.TEST_ERROR);
   }
 
   @Test
   public void itDoesNotCallConsumerWhenErrAbsent() {
     List<SampleError> results = new ArrayList<>();
     OK_RESULT.ifErr(results::add);
-    assertThat(results.isEmpty());
+    assertThat(results).isEmpty();
   }
 
   @Test
@@ -169,7 +170,7 @@ public class ResultTest {
       ImmutableList.of(SAMPLE_STRING)
     );
     result.ifOk(consumer);
-    assertThat(!check.isEmpty());
+    assertThat(check).isNotEmpty();
   }
 
   @Test
@@ -180,7 +181,7 @@ public class ResultTest {
       ImmutableList.of(SAMPLE_STRING)
     );
     result.ifErr(consumer);
-    assertThat(!check.isEmpty());
+    assertThat(check).isNotEmpty();
   }
 
   @Test
@@ -199,5 +200,17 @@ public class ResultTest {
     ERR_RESULT.consume(errorResults::add, okResults::add);
     assertThat(okResults).isEmpty();
     assertThat(errorResults).contains(ERR_RESULT.unwrapErrOrElseThrow());
+  }
+
+  @Test
+  public void itCanPropagateErrors() {
+    Result<Integer, String> res1 = Result.ok(1);
+    assertThatThrownBy(res1::propagateErr)
+      .isInstanceOf(IllegalStateException.class)
+      .hasMessageContaining("Cannot propagate an error for non-error Result");
+
+    Result<Integer, String> res2 = Result.err("a");
+    Result<String, String> res3 = res2.propagateErr();
+    assertThat(res2).isEqualTo(res3);
   }
 }

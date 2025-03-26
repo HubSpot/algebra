@@ -132,6 +132,17 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return unwrapErrOrElseThrow(() -> new IllegalStateException(message));
   }
 
+  public <NEW_SUCCESS_TYPE> Result<NEW_SUCCESS_TYPE, ERROR_TYPE> propagateErr() {
+    if (isOk()) {
+      throw new IllegalStateException("Cannot propagate an error for non-error Result");
+    }
+
+    @SuppressWarnings("unchecked")
+    Result<NEW_SUCCESS_TYPE, ERROR_TYPE> res =
+      (Result<NEW_SUCCESS_TYPE, ERROR_TYPE>) this;
+    return res;
+  }
+
   public abstract <R> R match(Function<ERROR_TYPE, R> err, Function<SUCCESS_TYPE, R> ok);
 
   @Override
