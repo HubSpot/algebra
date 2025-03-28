@@ -301,4 +301,67 @@ public class ResultTest {
     assertThat(combinedResult.isErr()).isTrue();
     assertThat(combinedResult.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR);
   }
+
+  @Test
+  public void itCombinesNineOkResults() {
+    Result<String, SampleError> result1 = Result.ok("Hello");
+    Result<Integer, SampleError> result2 = Result.ok(42);
+    Result<Double, SampleError> result3 = Result.ok(3.14);
+    Result<Boolean, SampleError> result4 = Result.ok(true);
+    Result<Character, SampleError> result5 = Result.ok('A');
+    Result<Long, SampleError> result6 = Result.ok(123L);
+    Result<Float, SampleError> result7 = Result.ok(2.718f);
+    Result<Short, SampleError> result8 = Result.ok((short) 7);
+    Result<Byte, SampleError> result9 = Result.ok((byte) 1);
+
+    Result<String, SampleError> combinedResult = Result
+      .combine(result1)
+      .and(result2)
+      .and(result3)
+      .and(result4)
+      .and(result5)
+      .and(result6)
+      .and(result7)
+      .and(result8)
+      .and(result9)
+      .map((str, num, dbl, bool, chr, lng, flt, shrt, byt) ->
+        String.format("%s %d %.2f %b %c %d %.3f %d %d",
+          str, num, dbl, bool, chr, lng, flt, shrt, byt)
+      );
+
+    assertThat(combinedResult.isOk()).isTrue();
+    assertThat(combinedResult.unwrapOrElseThrow())
+      .isEqualTo("Hello 42 3.14 true A 123 2.718 7 1");
+  }
+
+  @Test
+  public void itCombinesNineResultsWithAnErr() {
+    Result<String, SampleError> result1 = Result.ok("Hello");
+    Result<Integer, SampleError> result2 = Result.ok(42);
+    Result<Double, SampleError> result3 = Result.ok(3.14);
+    Result<Boolean, SampleError> result4 = Result.err(SampleError.TEST_ERROR);
+    Result<Character, SampleError> result5 = Result.ok('A');
+    Result<Long, SampleError> result6 = Result.ok(123L);
+    Result<Float, SampleError> result7 = Result.ok(2.718f);
+    Result<Short, SampleError> result8 = Result.ok((short) 7);
+    Result<Byte, SampleError> result9 = Result.ok((byte) 1);
+
+    Result<String, SampleError> combinedResult = Result
+      .combine(result1)
+      .and(result2)
+      .and(result3)
+      .and(result4)
+      .and(result5)
+      .and(result6)
+      .and(result7)
+      .and(result8)
+      .and(result9)
+      .map((str, num, dbl, bool, chr, lng, flt, shrt, byt) ->
+        String.format("%s %d %.2f %b %c %d %.3f %d %d",
+          str, num, dbl, bool, chr, lng, flt, shrt, byt)
+      );
+
+    assertThat(combinedResult.isErr()).isTrue();
+    assertThat(combinedResult.unwrapErrOrElseThrow()).isEqualTo(SampleError.TEST_ERROR);
+  }
 }

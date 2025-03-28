@@ -202,6 +202,19 @@ class ResultCombinator {
     }
 
     /**
+     * Add a sixth Result to be combined.
+     */
+    public <G> R6<A, B, C, D, E, G, F> and(Result<G, F> r6) {
+      if (error != null) {
+        return new R6<>(value1, value2, value3, value4, value5, null, error);
+      }
+      if (r6.isErr()) {
+        return new R6<>(value1, value2, value3, value4, value5, null, r6.coerceErr());
+      }
+      return new R6<>(value1, value2, value3, value4, value5, r6.unwrapOrElseThrow(), null);
+    }
+
+    /**
      * Complete the combination with a mapping function for five values.
      */
     public <R> Result<R, F> map(QuintFunction<A, B, C, D, E, R> mapper) {
@@ -209,6 +222,193 @@ class ResultCombinator {
         return error.coerceErr();
       }
       return Result.ok(mapper.apply(value1, value2, value3, value4, value5));
+    }
+  }
+
+  /**
+   * Holder for six Result values.
+   */
+  public static class R6<A, B, C, D, E, F, G> {
+
+    private final A value1;
+    private final B value2;
+    private final C value3;
+    private final D value4;
+    private final E value5;
+    private final F value6;
+    private final Result<?, G> error;
+
+    private R6(A value1, B value2, C value3, D value4, E value5, F value6, Result<?, G> error) {
+      this.value1 = value1;
+      this.value2 = value2;
+      this.value3 = value3;
+      this.value4 = value4;
+      this.value5 = value5;
+      this.value6 = value6;
+      this.error = error;
+    }
+
+    /**
+     * Add a seventh Result to be combined.
+     */
+    public <H> R7<A, B, C, D, E, F, H, G> and(Result<H, G> r7) {
+      if (error != null) {
+        return new R7<>(value1, value2, value3, value4, value5, value6, null, error);
+      }
+      if (r7.isErr()) {
+        return new R7<>(value1, value2, value3, value4, value5, value6, null, r7.coerceErr());
+      }
+      return new R7<>(value1, value2, value3, value4, value5, value6, r7.unwrapOrElseThrow(), null);
+    }
+
+    /**
+     * Complete the combination with a mapping function for six values.
+     */
+    public <R> Result<R, G> map(SextFunction<A, B, C, D, E, F, R> mapper) {
+      if (error != null) {
+        return error.coerceErr();
+      }
+      return Result.ok(mapper.apply(value1, value2, value3, value4, value5, value6));
+    }
+  }
+
+  /**
+   * Holder for seven Result values.
+   */
+  public static class R7<A, B, C, D, E, F, G, H> {
+
+    private final A value1;
+    private final B value2;
+    private final C value3;
+    private final D value4;
+    private final E value5;
+    private final F value6;
+    private final G value7;
+    private final Result<?, H> error;
+
+    private R7(A value1, B value2, C value3, D value4, E value5, F value6, G value7, Result<?, H> error) {
+      this.value1 = value1;
+      this.value2 = value2;
+      this.value3 = value3;
+      this.value4 = value4;
+      this.value5 = value5;
+      this.value6 = value6;
+      this.value7 = value7;
+      this.error = error;
+    }
+
+    /**
+     * Add an eighth Result to be combined.
+     */
+    public <I> R8<A, B, C, D, E, F, G, I, H> and(Result<I, H> r8) {
+      if (error != null) {
+        return new R8<>(value1, value2, value3, value4, value5, value6, value7, null, error);
+      }
+      if (r8.isErr()) {
+        return new R8<>(value1, value2, value3, value4, value5, value6, value7, null, r8.coerceErr());
+      }
+      return new R8<>(value1, value2, value3, value4, value5, value6, value7, r8.unwrapOrElseThrow(), null);
+    }
+
+    /**
+     * Complete the combination with a mapping function for seven values.
+     */
+    public <R> Result<R, H> map(SeptFunction<A, B, C, D, E, F, G, R> mapper) {
+      if (error != null) {
+        return error.coerceErr();
+      }
+      return Result.ok(mapper.apply(value1, value2, value3, value4, value5, value6, value7));
+    }
+  }
+
+  /**
+   * Holder for eight Result values.
+   */
+  public static class R8<A, B, C, D, E, F, G, H, I> {
+
+    private final A value1;
+    private final B value2;
+    private final C value3;
+    private final D value4;
+    private final E value5;
+    private final F value6;
+    private final G value7;
+    private final H value8;
+    private final Result<?, I> error;
+
+    private R8(A value1, B value2, C value3, D value4, E value5, F value6, G value7, H value8, Result<?, I> error) {
+      this.value1 = value1;
+      this.value2 = value2;
+      this.value3 = value3;
+      this.value4 = value4;
+      this.value5 = value5;
+      this.value6 = value6;
+      this.value7 = value7;
+      this.value8 = value8;
+      this.error = error;
+    }
+
+    /**
+     * Add a ninth Result to be combined.
+     */
+    public <J> R9<A, B, C, D, E, F, G, H, J, I> and(Result<J, I> r9) {
+      if (error != null) {
+        return new R9<>(value1, value2, value3, value4, value5, value6, value7, value8, null, error);
+      }
+      if (r9.isErr()) {
+        return new R9<>(value1, value2, value3, value4, value5, value6, value7, value8, null, r9.coerceErr());
+      }
+      return new R9<>(value1, value2, value3, value4, value5, value6, value7, value8, r9.unwrapOrElseThrow(), null);
+    }
+
+    /**
+     * Complete the combination with a mapping function for eight values.
+     */
+    public <R> Result<R, I> map(OctFunction<A, B, C, D, E, F, G, H, R> mapper) {
+      if (error != null) {
+        return error.coerceErr();
+      }
+      return Result.ok(mapper.apply(value1, value2, value3, value4, value5, value6, value7, value8));
+    }
+  }
+
+  /**
+   * Holder for nine Result values.
+   */
+  public static class R9<A, B, C, D, E, F, G, H, I, J> {
+
+    private final A value1;
+    private final B value2;
+    private final C value3;
+    private final D value4;
+    private final E value5;
+    private final F value6;
+    private final G value7;
+    private final H value8;
+    private final I value9;
+    private final Result<?, J> error;
+
+    private R9(A value1, B value2, C value3, D value4, E value5, F value6, G value7, H value8, I value9, Result<?, J> error) {
+      this.value1 = value1;
+      this.value2 = value2;
+      this.value3 = value3;
+      this.value4 = value4;
+      this.value5 = value5;
+      this.value6 = value6;
+      this.value7 = value7;
+      this.value8 = value8;
+      this.value9 = value9;
+      this.error = error;
+    }
+
+    /**
+     * Complete the combination with a mapping function for nine values.
+     */
+    public <R> Result<R, J> map(NonFunction<A, B, C, D, E, F, G, H, I, R> mapper) {
+      if (error != null) {
+        return error.coerceErr();
+      }
+      return Result.ok(mapper.apply(value1, value2, value3, value4, value5, value6, value7, value8, value9));
     }
   }
 }
