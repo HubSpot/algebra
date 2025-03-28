@@ -137,28 +137,28 @@ public class ResultTest {
   public void itCallsConsumerWhenOkPresent() {
     List<String> results = new ArrayList<>();
     OK_RESULT.ifOk(results::add);
-    assertThat(results.contains(SAMPLE_STRING));
+    assertThat(results).contains(SAMPLE_STRING);
   }
 
   @Test
   public void itDoesNotCallConsumerWhenOkAbsent() {
     List<String> results = new ArrayList<>();
     ERR_RESULT.ifOk(results::add);
-    assertThat(results.isEmpty());
+    assertThat(results).isEmpty();
   }
 
   @Test
   public void itCallsConsumerWhenErrPresent() {
     List<SampleError> results = new ArrayList<>();
     ERR_RESULT.ifErr(results::add);
-    assertThat(results.contains(SampleError.TEST_ERROR));
+    assertThat(results).contains(SampleError.TEST_ERROR);
   }
 
   @Test
   public void itDoesNotCallConsumerWhenErrAbsent() {
     List<SampleError> results = new ArrayList<>();
     OK_RESULT.ifErr(results::add);
-    assertThat(results.isEmpty());
+    assertThat(results).isEmpty();
   }
 
   @Test
@@ -169,7 +169,7 @@ public class ResultTest {
       ImmutableList.of(SAMPLE_STRING)
     );
     result.ifOk(consumer);
-    assertThat(!check.isEmpty());
+    assertThat(check).isNotEmpty();
   }
 
   @Test
@@ -180,7 +180,7 @@ public class ResultTest {
       ImmutableList.of(SAMPLE_STRING)
     );
     result.ifErr(consumer);
-    assertThat(!check.isEmpty());
+    assertThat(check).isNotEmpty();
   }
 
   @Test
