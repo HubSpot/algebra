@@ -211,7 +211,15 @@ class ResultCombinator {
       if (r6.isErr()) {
         return new R6<>(value1, value2, value3, value4, value5, null, r6.coerceErr());
       }
-      return new R6<>(value1, value2, value3, value4, value5, r6.unwrapOrElseThrow(), null);
+      return new R6<>(
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        r6.unwrapOrElseThrow(),
+        null
+      );
     }
 
     /**
@@ -238,7 +246,15 @@ class ResultCombinator {
     private final F value6;
     private final Result<?, G> error;
 
-    private R6(A value1, B value2, C value3, D value4, E value5, F value6, Result<?, G> error) {
+    private R6(
+      A value1,
+      B value2,
+      C value3,
+      D value4,
+      E value5,
+      F value6,
+      Result<?, G> error
+    ) {
       this.value1 = value1;
       this.value2 = value2;
       this.value3 = value3;
@@ -256,9 +272,27 @@ class ResultCombinator {
         return new R7<>(value1, value2, value3, value4, value5, value6, null, error);
       }
       if (r7.isErr()) {
-        return new R7<>(value1, value2, value3, value4, value5, value6, null, r7.coerceErr());
+        return new R7<>(
+          value1,
+          value2,
+          value3,
+          value4,
+          value5,
+          value6,
+          null,
+          r7.coerceErr()
+        );
       }
-      return new R7<>(value1, value2, value3, value4, value5, value6, r7.unwrapOrElseThrow(), null);
+      return new R7<>(
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        r7.unwrapOrElseThrow(),
+        null
+      );
     }
 
     /**
@@ -286,7 +320,16 @@ class ResultCombinator {
     private final G value7;
     private final Result<?, H> error;
 
-    private R7(A value1, B value2, C value3, D value4, E value5, F value6, G value7, Result<?, H> error) {
+    private R7(
+      A value1,
+      B value2,
+      C value3,
+      D value4,
+      E value5,
+      F value6,
+      G value7,
+      Result<?, H> error
+    ) {
       this.value1 = value1;
       this.value2 = value2;
       this.value3 = value3;
@@ -302,12 +345,42 @@ class ResultCombinator {
      */
     public <I> R8<A, B, C, D, E, F, G, I, H> and(Result<I, H> r8) {
       if (error != null) {
-        return new R8<>(value1, value2, value3, value4, value5, value6, value7, null, error);
+        return new R8<>(
+          value1,
+          value2,
+          value3,
+          value4,
+          value5,
+          value6,
+          value7,
+          null,
+          error
+        );
       }
       if (r8.isErr()) {
-        return new R8<>(value1, value2, value3, value4, value5, value6, value7, null, r8.coerceErr());
+        return new R8<>(
+          value1,
+          value2,
+          value3,
+          value4,
+          value5,
+          value6,
+          value7,
+          null,
+          r8.coerceErr()
+        );
       }
-      return new R8<>(value1, value2, value3, value4, value5, value6, value7, r8.unwrapOrElseThrow(), null);
+      return new R8<>(
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value7,
+        r8.unwrapOrElseThrow(),
+        null
+      );
     }
 
     /**
@@ -317,7 +390,9 @@ class ResultCombinator {
       if (error != null) {
         return error.coerceErr();
       }
-      return Result.ok(mapper.apply(value1, value2, value3, value4, value5, value6, value7));
+      return Result.ok(
+        mapper.apply(value1, value2, value3, value4, value5, value6, value7)
+      );
     }
   }
 
@@ -336,7 +411,17 @@ class ResultCombinator {
     private final H value8;
     private final Result<?, I> error;
 
-    private R8(A value1, B value2, C value3, D value4, E value5, F value6, G value7, H value8, Result<?, I> error) {
+    private R8(
+      A value1,
+      B value2,
+      C value3,
+      D value4,
+      E value5,
+      F value6,
+      G value7,
+      H value8,
+      Result<?, I> error
+    ) {
       this.value1 = value1;
       this.value2 = value2;
       this.value3 = value3;
@@ -353,12 +438,45 @@ class ResultCombinator {
      */
     public <J> R9<A, B, C, D, E, F, G, H, J, I> and(Result<J, I> r9) {
       if (error != null) {
-        return new R9<>(value1, value2, value3, value4, value5, value6, value7, value8, null, error);
+        return new R9<>(
+          value1,
+          value2,
+          value3,
+          value4,
+          value5,
+          value6,
+          value7,
+          value8,
+          null,
+          error
+        );
       }
       if (r9.isErr()) {
-        return new R9<>(value1, value2, value3, value4, value5, value6, value7, value8, null, r9.coerceErr());
+        return new R9<>(
+          value1,
+          value2,
+          value3,
+          value4,
+          value5,
+          value6,
+          value7,
+          value8,
+          null,
+          r9.coerceErr()
+        );
       }
-      return new R9<>(value1, value2, value3, value4, value5, value6, value7, value8, r9.unwrapOrElseThrow(), null);
+      return new R9<>(
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value7,
+        value8,
+        r9.unwrapOrElseThrow(),
+        null
+      );
     }
 
     /**
@@ -368,7 +486,9 @@ class ResultCombinator {
       if (error != null) {
         return error.coerceErr();
       }
-      return Result.ok(mapper.apply(value1, value2, value3, value4, value5, value6, value7, value8));
+      return Result.ok(
+        mapper.apply(value1, value2, value3, value4, value5, value6, value7, value8)
+      );
     }
   }
 
@@ -388,7 +508,18 @@ class ResultCombinator {
     private final I value9;
     private final Result<?, J> error;
 
-    private R9(A value1, B value2, C value3, D value4, E value5, F value6, G value7, H value8, I value9, Result<?, J> error) {
+    private R9(
+      A value1,
+      B value2,
+      C value3,
+      D value4,
+      E value5,
+      F value6,
+      G value7,
+      H value8,
+      I value9,
+      Result<?, J> error
+    ) {
       this.value1 = value1;
       this.value2 = value2;
       this.value3 = value3;
@@ -408,7 +539,19 @@ class ResultCombinator {
       if (error != null) {
         return error.coerceErr();
       }
-      return Result.ok(mapper.apply(value1, value2, value3, value4, value5, value6, value7, value8, value9));
+      return Result.ok(
+        mapper.apply(
+          value1,
+          value2,
+          value3,
+          value4,
+          value5,
+          value6,
+          value7,
+          value8,
+          value9
+        )
+      );
     }
   }
 }

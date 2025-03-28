@@ -325,8 +325,18 @@ public class ResultTest {
       .and(result8)
       .and(result9)
       .map((str, num, dbl, bool, chr, lng, flt, shrt, byt) ->
-        String.format("%s %d %.2f %b %c %d %.3f %d %d",
-          str, num, dbl, bool, chr, lng, flt, shrt, byt)
+        String.format(
+          "%s %d %.2f %b %c %d %.3f %d %d",
+          str,
+          num,
+          dbl,
+          bool,
+          chr,
+          lng,
+          flt,
+          shrt,
+          byt
+        )
       );
 
     assertThat(combinedResult.isOk()).isTrue();
@@ -357,8 +367,18 @@ public class ResultTest {
       .and(result8)
       .and(result9)
       .map((str, num, dbl, bool, chr, lng, flt, shrt, byt) ->
-        String.format("%s %d %.2f %b %c %d %.3f %d %d",
-          str, num, dbl, bool, chr, lng, flt, shrt, byt)
+        String.format(
+          "%s %d %.2f %b %c %d %.3f %d %d",
+          str,
+          num,
+          dbl,
+          bool,
+          chr,
+          lng,
+          flt,
+          shrt,
+          byt
+        )
       );
 
     assertThat(combinedResult.isErr()).isTrue();
