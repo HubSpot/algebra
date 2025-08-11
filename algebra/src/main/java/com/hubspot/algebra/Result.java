@@ -105,7 +105,13 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
   }
 
   public SUCCESS_TYPE unwrapOrElseThrow() {
-    return unwrapOrElseThrow(err -> new IllegalStateException(err.toString()));
+    return unwrapOrElseThrow(err -> {
+      if (err instanceof Throwable) {
+        return new IllegalStateException((Throwable) err);
+      } else {
+        return new IllegalStateException(err.toString());
+      }
+    });
   }
 
   public SUCCESS_TYPE expect(String message) {
@@ -125,7 +131,13 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
   }
 
   public ERROR_TYPE unwrapErrOrElseThrow() {
-    return unwrapErrOrElseThrow(ok -> new IllegalStateException(ok.toString()));
+    return unwrapErrOrElseThrow(ok -> {
+      if (ok instanceof Throwable) {
+        return new IllegalStateException((Throwable) ok);
+      } else {
+        return new IllegalStateException(ok.toString());
+      }
+    });
   }
 
   public ERROR_TYPE expectErr(String message) {
