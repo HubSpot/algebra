@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>algebra-parent</artifactId>
-  <version>1.7.0-SNAPSHOT</version>
+  <version>1.7.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>algebra</name>
