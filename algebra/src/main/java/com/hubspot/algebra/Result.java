@@ -155,7 +155,7 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return res;
   }
 
-    public Result<SUCCESS_TYPE, ERROR_TYPE> peekOk(
+  public Result<SUCCESS_TYPE, ERROR_TYPE> peekOk(
     Consumer<? super SUCCESS_TYPE> consumer
   ) {
     ifOk(consumer);
