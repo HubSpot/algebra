@@ -213,4 +213,70 @@ public class ResultTest {
     Result<String, String> res3 = res2.propagateErr();
     assertThat(res2).isEqualTo(res3);
   }
+
+  @Test
+  public void itPeeksOkWhenOkPresent() {
+    List<String> results = new ArrayList<>();
+    Result<String, SampleError> returned = OK_RESULT.peekOk(results::add);
+    assertThat(results).containsExactly(SAMPLE_STRING);
+    assertThat(returned).isSameAs(OK_RESULT);
+  }
+
+  @Test
+  public void itPeeksOkWhenOkAbsent() {
+    List<String> results = new ArrayList<>();
+    Result<String, SampleError> returned = ERR_RESULT.peekOk(results::add);
+    assertThat(results).isEmpty();
+    assertThat(returned).isSameAs(ERR_RESULT);
+  }
+
+  @Test
+  public void itPeeksErrWhenErrPresent() {
+    List<SampleError> results = new ArrayList<>();
+    Result<String, SampleError> returned = ERR_RESULT.peekErr(results::add);
+    assertThat(results).containsExactly(SampleError.TEST_ERROR);
+    assertThat(returned).isSameAs(ERR_RESULT);
+  }
+
+  @Test
+  public void itPeeksErrWhenErrAbsent() {
+    List<SampleError> results = new ArrayList<>();
+    Result<String, SampleError> returned = OK_RESULT.peekErr(results::add);
+    assertThat(results).isEmpty();
+    assertThat(returned).isSameAs(OK_RESULT);
+  }
+
+  @Test
+  public void itPeeksOnOk() {
+    List<String> results = new ArrayList<>();
+    Result<String, SampleError> returned = OK_RESULT.peek(() -> results.add("peeked"));
+    assertThat(results).containsExactly("peeked");
+    assertThat(returned).isSameAs(OK_RESULT);
+  }
+
+  @Test
+  public void itPeeksOnErr() {
+    List<String> results = new ArrayList<>();
+    Result<String, SampleError> returned = ERR_RESULT.peek(() -> results.add("peeked"));
+    assertThat(results).containsExactly("peeked");
+    assertThat(returned).isSameAs(ERR_RESULT);
+  }
+
+  @Test
+  public void itAllowsPeekChaining() {
+    List<String> okResults = new ArrayList<>();
+    List<SampleError> errResults = new ArrayList<>();
+    List<String> peekResults = new ArrayList<>();
+
+    Result<Integer, SampleError> result = OK_RESULT
+      .peekOk(okResults::add)
+      .peekErr(errResults::add)
+      .peek(() -> peekResults.add("chained"))
+      .mapOk(String::length);
+
+    assertThat(okResults).containsExactly(SAMPLE_STRING);
+    assertThat(errResults).isEmpty();
+    assertThat(peekResults).containsExactly("chained");
+    assertThat(result.unwrapOrElseThrow()).isEqualTo(SAMPLE_STRING.length());
+  }
 }

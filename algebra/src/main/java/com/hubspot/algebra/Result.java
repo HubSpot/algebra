@@ -155,6 +155,23 @@ public abstract class Result<SUCCESS_TYPE, ERROR_TYPE> {
     return res;
   }
 
+  public Result<SUCCESS_TYPE, ERROR_TYPE> peekOk(
+    Consumer<? super SUCCESS_TYPE> consumer
+  ) {
+    ifOk(consumer);
+    return this;
+  }
+
+  public Result<SUCCESS_TYPE, ERROR_TYPE> peekErr(Consumer<? super ERROR_TYPE> consumer) {
+    ifErr(consumer);
+    return this;
+  }
+
+  public Result<SUCCESS_TYPE, ERROR_TYPE> peek(Runnable runnable) {
+    runnable.run();
+    return this;
+  }
+
   public abstract <R> R match(Function<ERROR_TYPE, R> err, Function<SUCCESS_TYPE, R> ok);
 
   @Override
