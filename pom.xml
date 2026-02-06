@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>algebra-parent</artifactId>
-  <version>1.7.2</version>
+  <version>1.7.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>algebra</name>
@@ -90,8 +90,4 @@
       <email>jstehler@hubspot.com</email>
     </developer>
   </developers>
-
-  <scm>
-    <tag>algebra-parent-1.7.2</tag>
-  </scm>
 </project>
